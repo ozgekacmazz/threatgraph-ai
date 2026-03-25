@@ -1,0 +1,775 @@
+artifact,category,attack
+Access Control Configuration,Configuration,Domain or Tenant Policy Modification
+Access Control Configuration,Configuration,File and Directory Permissions Modification
+Access Control Configuration,Configuration,Group Policy Discovery
+Access Control Configuration,Configuration,Group Policy Preferences
+Access Control Configuration,Configuration,SID-History Injection
+Access Control Configuration,Configuration,Setuid and Setgid
+Access Token,Identity,Application Access Token
+Access Token,Identity,Create Process with Token
+Access Token,Identity,Golden Ticket
+Access Token,Identity,Make and Impersonate Token
+Access Token,Identity,Steal Application Access Token
+Access Token,Identity,Steal or Forge Kerberos Tickets
+Access Token,Identity,Steal or Forge Kerberos Tickets
+Access Token,Identity,Token Impersonation/Theft
+Application Configuration,Configuration,Disable Windows Event Logging
+Application Configuration,Configuration,Email Forwarding Rule
+Application Configuration,Configuration,Email Hiding Rules
+Application Configuration,Configuration,Email Hiding Rules
+Application Configuration,Configuration,Email Hiding Rules
+Application Configuration,Configuration,Impair Command History Logging
+Boot Loader,System,Bootkit
+Certificate File,File,Application Layer Protocol
+Certificate File,File,Asymmetric Cryptography
+Certificate File,File,Exfiltration Over Asymmetric Encrypted Non-C2 Protocol
+Certificate File,File,Exfiltration Over C2 Channel
+Certificate File,File,Web Protocols
+Configuration Resource,Configuration,Accessibility Features
+Configuration Resource,Configuration,AppCert DLLs
+Configuration Resource,Configuration,AppInit DLLs
+Configuration Resource,Configuration,Application Shimming
+Configuration Resource,Configuration,Authentication Package
+Configuration Resource,Configuration,Bypass User Account Control
+Configuration Resource,Configuration,COR_PROFILER
+Configuration Resource,Configuration,Change Default File Association
+Configuration Resource,Configuration,Cloud Instance Metadata API
+Configuration Resource,Configuration,Cloud Service Dashboard
+Configuration Resource,Configuration,Cloud Service Discovery
+Configuration Resource,Configuration,Control Panel
+Configuration Resource,Configuration,Disable Windows Event Logging
+Configuration Resource,Configuration,Disable or Modify System Firewall
+Configuration Resource,Configuration,Domain or Tenant Policy Modification
+Configuration Resource,Configuration,Email Forwarding Rule
+Configuration Resource,Configuration,Email Hiding Rules
+Configuration Resource,Configuration,Email Hiding Rules
+Configuration Resource,Configuration,Email Hiding Rules
+Configuration Resource,Configuration,Emond
+Configuration Resource,Configuration,File and Directory Permissions Modification
+Configuration Resource,Configuration,Group Policy Discovery
+Configuration Resource,Configuration,Group Policy Preferences
+Configuration Resource,Configuration,Impair Command History Logging
+Configuration Resource,Configuration,Impair Command History Logging
+Configuration Resource,Configuration,Netsh Helper DLL
+Configuration Resource,Configuration,Office Template Macros
+Configuration Resource,Configuration,Office Test
+Configuration Resource,Configuration,Outlook Home Page
+Configuration Resource,Configuration,Outlook Rules
+Configuration Resource,Configuration,Password Filter DLL
+Configuration Resource,Configuration,Port Monitors
+Configuration Resource,Configuration,RC Scripts
+Configuration Resource,Configuration,Registry Run Keys / Startup Folder
+Configuration Resource,Configuration,SID-History Injection
+Configuration Resource,Configuration,SIP and Trust Provider Hijacking
+Configuration Resource,Configuration,Safe Mode Boot
+Configuration Resource,Configuration,Screensaver
+Configuration Resource,Configuration,Security Software Discovery
+Configuration Resource,Configuration,Security Support Provider
+Configuration Resource,Configuration,Services Registry Permissions Weakness
+Configuration Resource,Configuration,Setuid and Setgid
+Configuration Resource,Configuration,Startup Items
+Configuration Resource,Configuration,System Location Discovery
+Configuration Resource,Configuration,Time Providers
+Configuration Resource,Configuration,Winlogon Helper DLL
+Container Image,System,Implant Internal Image
+Create File,File,Compiled HTML File
+Create File,File,Local Data Staging
+Create Process,Process,AppCert DLLs
+Create Process,Process,AppInit DLLs
+Create Process,Process,Application Window Discovery
+Create Process,Process,Asynchronous Procedure Call
+Create Process,Process,Bypass User Account Control
+Create Process,Process,CMSTP
+Create Process,Process,Compiled HTML File
+Create Process,Process,Control Panel
+Create Process,Process,Deobfuscate/Decode Files or Information
+Create Process,Process,Mshta
+Create Process,Process,Parent PID Spoofing
+Create Process,Process,Process Discovery
+Create Process,Process,Process Doppelgänging
+Create Process,Process,Remote System Discovery
+Create Process,Process,Rundll32
+Create Process,Process,SQL Stored Procedures
+Create Process,Process,Scheduled Task/Job
+Create Process,Process,System Information Discovery
+Create Process,Process,System Network Configuration Discovery
+Create Process,Process,System Owner/User Discovery
+Create Process,Process,System Service Discovery
+Create Process,Process,System Time Discovery
+Create Process,Process,Windows Management Instrumentation
+Create Process,Process,XSL Script Processing
+Credential,Identity,/etc/passwd and /etc/shadow
+Credential,Identity,Additional Cloud Credentials
+Credential,Identity,Application Access Token
+Credential,Identity,Cached Domain Credentials
+Credential,Identity,Create Process with Token
+Credential,Identity,Golden Ticket
+Credential,Identity,Keychain
+Credential,Identity,Make and Impersonate Token
+Credential,Identity,NTDS
+Credential,Identity,Password Cracking
+Credential,Identity,Password Guessing
+Credential,Identity,Password Spraying
+Credential,Identity,Steal Application Access Token
+Credential,Identity,Steal Web Session Cookie
+Credential,Identity,Steal or Forge Kerberos Tickets
+Credential,Identity,Steal or Forge Kerberos Tickets
+Credential,Identity,Token Impersonation/Theft
+Credential,Identity,Unsecured Credentials
+Credential,Identity,Web Session Cookie
+DNS Lookup,Network,Network Sniffing
+DNS Network Traffic,Network,DNS
+DNS Network Traffic,Network,Dynamic Resolution
+Database,File,/etc/passwd and /etc/shadow
+Database,File,Add-ins
+Database,File,Code Repositories
+Database,File,Component Object Model Hijacking
+Database,File,Credentials from Password Stores
+Database,File,Credentials from Web Browsers
+Database,File,Credentials in Registry
+Database,File,Elevated Execution with Prompt
+Database,File,Hidden File System
+Database,File,Hidden Window
+Database,File,Image File Execution Options Injection
+Database,File,Keychain
+Database,File,LSA Secrets
+Database,File,MMC
+Database,File,Modify Registry
+Database,File,Query Registry
+Database,File,Rogue Domain Controller
+Database,File,Security Account Manager
+Database,File,Securityd Memory
+Database,File,System Language Discovery
+Database,File,System Owner/User Discovery
+Database,File,Windows Service
+Database Query,Configuration,Exploit Public-Facing Application
+Database Record,File,Accessibility Features
+Database Record,File,AppCert DLLs
+Database Record,File,AppInit DLLs
+Database Record,File,Authentication Package
+Database Record,File,Bypass User Account Control
+Database Record,File,COR_PROFILER
+Database Record,File,Change Default File Association
+Database Record,File,Control Panel
+Database Record,File,Impair Command History Logging
+Database Record,File,Netsh Helper DLL
+Database Record,File,Office Template Macros
+Database Record,File,Office Test
+Database Record,File,Password Filter DLL
+Database Record,File,Port Monitors
+Database Record,File,Registry Run Keys / Startup Folder
+Database Record,File,SIP and Trust Provider Hijacking
+Database Record,File,Safe Mode Boot
+Database Record,File,Screensaver
+Database Record,File,Security Software Discovery
+Database Record,File,Security Support Provider
+Database Record,File,Services Registry Permissions Weakness
+Database Record,File,Time Providers
+Database Record,File,Winlogon Helper DLL
+Decoy Artifact,Misc,System Information Discovery
+Digital Camera,System,Video Capture
+Digital System,System,Downgrade Attack
+Directory,Configuration,File and Directory Discovery
+Directory,Configuration,Run Virtual Instance
+Directory,Configuration,Startup Items
+Directory Service,Configuration,System Owner/User Discovery
+Document File,File,Internal Spearphishing
+Document File,File,Local Email Collection
+Document File,File,Mshta
+Document File,File,Outlook Forms
+Document File,File,Spearphishing Attachment
+Document File,File,Spearphishing Link
+Document File,File,VBA Stomping
+Domain User Account,Identity,Additional Cloud Roles
+Domain User Account,Identity,Additional Email Delegate Permissions
+Domain User Account,Identity,Domain Account
+Domain User Account,Identity,Domain Account
+Domain User Account,Identity,Domain Accounts
+Email,Network,Internal Spearphishing
+Email,Network,Local Email Collection
+Email,Network,Spearphishing Attachment
+Email,Network,Spearphishing Link
+Event Log,Configuration,Clear Command History
+Event Log,Configuration,Clear Windows Event Logs
+Event Log,Configuration,Create Process with Token
+Event Log,Configuration,Credential Stuffing
+Event Log,Configuration,DCSync
+Event Log,Configuration,Deobfuscate/Decode Files or Information
+Event Log,Configuration,Forced Authentication
+Event Log,Configuration,Make and Impersonate Token
+Event Log,Configuration,Password Guessing
+Event Log,Configuration,Password Spraying
+Event Log,Configuration,Sudo and Sudo Caching
+Event Log,Configuration,Trap
+Event Log,Configuration,Windows Management Instrumentation Event Subscription
+Executable File,File,Accessibility Features
+Executable File,File,Binary Padding
+Executable File,File,Bypass User Account Control
+Executable File,File,Command and Scripting Interpreter
+Executable File,File,Compile After Delivery
+Executable File,File,Component Object Model Hijacking
+Executable File,File,Deobfuscate/Decode Files or Information
+Executable File,File,Impair Command History Logging
+Executable File,File,Invalid Code Signature
+Executable File,File,LC_LOAD_DYLIB Addition
+Executable File,File,Login Hook
+Executable File,File,Logon Script (Windows)
+Executable File,File,Malicious File
+Executable File,File,Network Logon Script
+Executable File,File,Office Template Macros
+Executable File,File,Office Template Macros
+Executable File,File,Path Interception by PATH Environment Variable
+Executable File,File,Path Interception by Search Order Hijacking
+Executable File,File,Path Interception by Unquoted Path
+Executable File,File,PowerShell Profile
+Executable File,File,RC Scripts
+Executable File,File,Registry Run Keys / Startup Folder
+Executable File,File,Rename Legitimate Utilities
+Executable File,File,Runtime Data Manipulation
+Executable File,File,Screensaver
+Executable File,File,Shortcut Modification
+Executable File,File,Software Packing
+Executable File,File,System Network Configuration Discovery
+Executable File,File,Thread Execution Hijacking
+Executable File,File,Trap
+Executable File,File,Trap
+Executable File,File,Web Shell
+Executable File,File,XSL Script Processing
+File,File,/etc/passwd and /etc/shadow
+File,File,Accessibility Features
+File,File,AppCert DLLs
+File,File,AppInit DLLs
+File,File,Application Layer Protocol
+File,File,Archive Collected Data
+File,File,Archive via Custom Method
+File,File,Archive via Library
+File,File,Archive via Utility
+File,File,Asymmetric Cryptography
+File,File,Automated Collection
+File,File,Bash History
+File,File,Binary Padding
+File,File,Bypass User Account Control
+File,File,COR_PROFILER
+File,File,Clear Linux or Mac System Logs
+File,File,Command and Scripting Interpreter
+File,File,Compile After Delivery
+File,File,Component Object Model Hijacking
+File,File,Credentials In Files
+File,File,Credentials from Password Stores
+File,File,Credentials from Web Browsers
+File,File,DLL
+File,File,DLL Side-Loading
+File,File,DLL Side-Loading
+File,File,Data from Local System
+File,File,Deobfuscate/Decode Files or Information
+File,File,Dylib Hijacking
+File,File,Dylib Hijacking
+File,File,Dynamic Linker Hijacking
+File,File,Dynamic-link Library Injection
+File,File,Dynamic-link Library Injection
+File,File,Emond
+File,File,Emond
+File,File,Exfiltration Over Asymmetric Encrypted Non-C2 Protocol
+File,File,Exfiltration Over C2 Channel
+File,File,File Deletion
+File,File,File Deletion
+File,File,File and Directory Discovery
+File,File,Forced Authentication
+File,File,Hidden Users
+File,File,Hidden Window
+File,File,Impair Command History Logging
+File,File,Internal Spearphishing
+File,File,Invalid Code Signature
+File,File,Kernel Modules and Extensions
+File,File,LC_LOAD_DYLIB Addition
+File,File,LSASS Driver
+File,File,Launch Agent
+File,File,Launch Daemon
+File,File,Launchd
+File,File,Local Data Staging
+File,File,Local Email Collection
+File,File,Login Hook
+File,File,Logon Script (Windows)
+File,File,MSBuild
+File,File,Malicious File
+File,File,Match Legitimate Resource Name or Location
+File,File,Mshta
+File,File,Network Logon Script
+File,File,Office Template Macros
+File,File,Office Template Macros
+File,File,Outlook Forms
+File,File,Password Filter DLL
+File,File,Path Interception by PATH Environment Variable
+File,File,Path Interception by Search Order Hijacking
+File,File,Path Interception by Unquoted Path
+File,File,Plist Modification
+File,File,Pluggable Authentication Modules
+File,File,Portable Executable Injection
+File,File,PowerShell Profile
+File,File,Proc Filesystem
+File,File,Proc Memory
+File,File,Proc Memory
+File,File,RC Scripts
+File,File,Re-opened Applications
+File,File,Registry Run Keys / Startup Folder
+File,File,Remote System Discovery
+File,File,Rename Legitimate Utilities
+File,File,Rename Legitimate Utilities
+File,File,Rootkit
+File,File,Run Virtual Instance
+File,File,Rundll32
+File,File,Runtime Data Manipulation
+File,File,Screensaver
+File,File,Shortcut Modification
+File,File,Software Deployment Tools
+File,File,Software Packing
+File,File,Space after Filename
+File,File,Spearphishing Attachment
+File,File,Spearphishing Link
+File,File,Spearphishing via Service
+File,File,Stored Data Manipulation
+File,File,Sudo and Sudo Caching
+File,File,System Network Configuration Discovery
+File,File,System Owner/User Discovery
+File,File,Systemd Service
+File,File,Systemd Service
+File,File,Thread Execution Hijacking
+File,File,Trap
+File,File,Trap
+File,File,Unix Shell Configuration Modification
+File,File,VBA Stomping
+File,File,VDSO Hijacking
+File,File,Web Protocols
+File,File,Web Shell
+File,File,XSL Script Processing
+File,File,XSL Script Processing
+File Section,File,Resource Forking
+File Section,File,Resource Forking
+File Transfer Network Traffic,Network,File Transfer Protocols
+File Transfer Network Traffic,Network,Lateral Tool Transfer
+Firmware,System,Component Firmware
+Firmware,System,ROMMONkit
+Firmware,System,Rootkit
+Firmware,System,System Firmware
+Hardware Device,System,Audio Capture
+Hardware Device,System,Cloud Storage Object Discovery
+Hardware Device,System,Communication Through Removable Media
+Hardware Device,System,Compromise Hardware Supply Chain
+Hardware Device,System,Data from Removable Media
+Hardware Device,System,Exfiltration over USB
+Hardware Device,System,Hardware Additions
+Hardware Device,System,Keylogging
+Hardware Device,System,Multi-Factor Authentication Interception
+Hardware Device,System,Replication Through Removable Media
+Hardware Device,System,Video Capture
+Host,System,Remote Email Collection
+Host,System,Transport Agent
+Host,System,Web Shell
+Identifier,Identity,Drive-by Compromise
+Identifier,Identity,Malicious Link
+Identifier,Identity,Spearphishing Link
+Identifier,Identity,Spearphishing via Service
+Inbound Internet Network Traffic,Network,Direct Network Flood
+Inbound Internet Network Traffic,Network,Exploit Public-Facing Application
+Inbound Internet Network Traffic,Network,Reflection Amplification
+Inbound Internet Network Traffic,Network,Service Exhaustion Flood
+Inbound Internet Network Traffic,Network,Spearphishing Attachment
+Inbound Internet Network Traffic,Network,Spearphishing Link
+Inbound Network Traffic,Network,Direct Network Flood
+Inbound Network Traffic,Network,Exploit Public-Facing Application
+Inbound Network Traffic,Network,Reflection Amplification
+Inbound Network Traffic,Network,Service Exhaustion Flood
+Inbound Network Traffic,Network,Spearphishing Attachment
+Inbound Network Traffic,Network,Spearphishing Link
+Input Device,System,Audio Capture
+Input Device,System,Keylogging
+Input Device,System,Video Capture
+Intranet Administrative Network Traffic,Network,Accessibility Features
+Intranet Administrative Network Traffic,Network,Additional Cloud Credentials
+Intranet Administrative Network Traffic,Network,Credential Stuffing
+Intranet Administrative Network Traffic,Network,DCSync
+Intranet Administrative Network Traffic,Network,Password Spraying
+Intranet Administrative Network Traffic,Network,Rogue Domain Controller
+Intranet Administrative Network Traffic,Network,Windows Management Instrumentation
+Intranet Administrative Network Traffic,Network,Windows Management Instrumentation Event Subscription
+Intranet IPC Network Traffic,Network,BITS Jobs
+Intranet Network Traffic,Network,Accessibility Features
+Intranet Network Traffic,Network,Additional Cloud Credentials
+Intranet Network Traffic,Network,BITS Jobs
+Intranet Network Traffic,Network,Credential Stuffing
+Intranet Network Traffic,Network,DCSync
+Intranet Network Traffic,Network,Exploitation of Remote Services
+Intranet Network Traffic,Network,Internal Proxy
+Intranet Network Traffic,Network,LLMNR/NBT-NS Poisoning and SMB Relay
+Intranet Network Traffic,Network,Lateral Tool Transfer
+Intranet Network Traffic,Network,Password Spraying
+Intranet Network Traffic,Network,Remote Services
+Intranet Network Traffic,Network,Rogue Domain Controller
+Intranet Network Traffic,Network,Trusted Relationship
+Intranet Network Traffic,Network,Windows Management Instrumentation
+Intranet Network Traffic,Network,Windows Management Instrumentation Event Subscription
+Job Schedule,Configuration,Masquerade Task or Service
+Job Schedule,Configuration,Scheduled Task/Job
+Local User Account,Identity,Local Account
+Local User Account,Identity,Local Account
+Local User Account,Identity,Local Accounts
+Log,Configuration,Cached Domain Credentials
+Log,Configuration,Clear Command History
+Log,Configuration,Clear Windows Event Logs
+Log,Configuration,Create Process with Token
+Log,Configuration,Credential Stuffing
+Log,Configuration,DCSync
+Log,Configuration,Deobfuscate/Decode Files or Information
+Log,Configuration,Forced Authentication
+Log,Configuration,Make and Impersonate Token
+Log,Configuration,Password Guessing
+Log,Configuration,Password Spraying
+Log,Configuration,Sudo and Sudo Caching
+Log,Configuration,Trap
+Log,Configuration,Windows Management Instrumentation Event Subscription
+Mail Server,System,Remote Email Collection
+Mail Server,System,Transport Agent
+Network Node,System,Remote Email Collection
+Network Node,System,Transport Agent
+Network Node,System,Web Shell
+Network Resource,System,Confluence
+Network Resource,System,Data from Network Shared Drive
+Network Resource,System,External Defacement
+Network Resource,System,Network Logon Script
+Network Resource,System,Network Share Connection Removal
+Network Resource,System,Remote Data Staging
+Network Resource,System,Sharepoint
+Network Resource,System,Taint Shared Content
+Network Traffic,Network,Accessibility Features
+Network Traffic,Network,Additional Cloud Credentials
+Network Traffic,Network,Adversary-in-the-Middle
+Network Traffic,Network,Application Access Token
+Network Traffic,Network,Application Layer Protocol
+Network Traffic,Network,Asymmetric Cryptography
+Network Traffic,Network,Automated Exfiltration
+Network Traffic,Network,BITS Jobs
+Network Traffic,Network,Browser Session Hijacking
+Network Traffic,Network,CMSTP
+Network Traffic,Network,Credential Stuffing
+Network Traffic,Network,DCSync
+Network Traffic,Network,DHCP Spoofing
+Network Traffic,Network,DNS
+Network Traffic,Network,Data Encoding
+Network Traffic,Network,Data Obfuscation
+Network Traffic,Network,Data Transfer Size Limits
+Network Traffic,Network,Direct Network Flood
+Network Traffic,Network,Domain Fronting
+Network Traffic,Network,Drive-by Compromise
+Network Traffic,Network,Dynamic Resolution
+Network Traffic,Network,Encrypted Channel
+Network Traffic,Network,Exfiltration Over Alternative Protocol
+Network Traffic,Network,Exfiltration Over Asymmetric Encrypted Non-C2 Protocol
+Network Traffic,Network,Exfiltration Over C2 Channel
+Network Traffic,Network,Exfiltration Over Other Network Medium
+Network Traffic,Network,Exfiltration Over Symmetric Encrypted Non-C2 Protocol
+Network Traffic,Network,Exfiltration Over Unencrypted Non-C2 Protocol
+Network Traffic,Network,Exfiltration Over Web Service
+Network Traffic,Network,Exfiltration to Cloud Storage
+Network Traffic,Network,Exfiltration to Code Repository
+Network Traffic,Network,Exploit Public-Facing Application
+Network Traffic,Network,Exploitation of Remote Services
+Network Traffic,Network,External Proxy
+Network Traffic,Network,Fallback Channels
+Network Traffic,Network,File Transfer Protocols
+Network Traffic,Network,Ingress Tool Transfer
+Network Traffic,Network,Internal Proxy
+Network Traffic,Network,Kerberoasting
+Network Traffic,Network,LLMNR/NBT-NS Poisoning and SMB Relay
+Network Traffic,Network,Lateral Tool Transfer
+Network Traffic,Network,Mail Protocols
+Network Traffic,Network,Malicious Link
+Network Traffic,Network,Multi-Stage Channels
+Network Traffic,Network,Multi-hop Proxy
+Network Traffic,Network,Non-Application Layer Protocol
+Network Traffic,Network,Non-Standard Port
+Network Traffic,Network,Password Spraying
+Network Traffic,Network,Port Knocking
+Network Traffic,Network,Protocol Tunneling
+Network Traffic,Network,Reflection Amplification
+Network Traffic,Network,Remote Access Tools
+Network Traffic,Network,Remote Desktop Protocol
+Network Traffic,Network,Remote Service Session Hijacking
+Network Traffic,Network,Remote Services
+Network Traffic,Network,Remote System Discovery
+Network Traffic,Network,Rogue Domain Controller
+Network Traffic,Network,SSH
+Network Traffic,Network,Scheduled Transfer
+Network Traffic,Network,Service Exhaustion Flood
+Network Traffic,Network,Spearphishing Attachment
+Network Traffic,Network,Spearphishing Link
+Network Traffic,Network,Symmetric Cryptography
+Network Traffic,Network,TFTP Boot
+Network Traffic,Network,Traffic Signaling
+Network Traffic,Network,Transmitted Data Manipulation
+Network Traffic,Network,Trusted Relationship
+Network Traffic,Network,Web Protocols
+Network Traffic,Network,Web Service
+Network Traffic,Network,Web Session Cookie
+Network Traffic,Network,Windows Management Instrumentation
+Network Traffic,Network,Windows Management Instrumentation Event Subscription
+Operating System File,File,Clear Linux or Mac System Logs
+Operating System File,File,Dynamic Linker Hijacking
+Operating System File,File,Pluggable Authentication Modules
+Operating System File,File,Proc Filesystem
+Operating System File,File,Proc Memory
+Operating System File,File,Proc Memory
+Operating System File,File,Remote System Discovery
+Operating System File,File,Rename Legitimate Utilities
+Operating System File,File,Sudo and Sudo Caching
+Operating System File,File,Systemd Service
+Operating System File,File,Systemd Service
+Operating System Process,Process,Disable or Modify Tools
+Operating System Process,Process,Scheduled Task
+Operating System Process,Process,Scheduled Task/Job
+Outbound Internet DNS Lookup Traffic,Network,DNS
+Outbound Internet DNS Lookup Traffic,Network,Dynamic Resolution
+Outbound Internet Network Traffic,Network,Application Layer Protocol
+Outbound Internet Network Traffic,Network,Asymmetric Cryptography
+Outbound Internet Network Traffic,Network,BITS Jobs
+Outbound Internet Network Traffic,Network,DNS
+Outbound Internet Network Traffic,Network,Data Encoding
+Outbound Internet Network Traffic,Network,Data Obfuscation
+Outbound Internet Network Traffic,Network,Domain Fronting
+Outbound Internet Network Traffic,Network,Drive-by Compromise
+Outbound Internet Network Traffic,Network,Dynamic Resolution
+Outbound Internet Network Traffic,Network,Encrypted Channel
+Outbound Internet Network Traffic,Network,Exfiltration Over Asymmetric Encrypted Non-C2 Protocol
+Outbound Internet Network Traffic,Network,Exfiltration Over Symmetric Encrypted Non-C2 Protocol
+Outbound Internet Network Traffic,Network,Exfiltration Over Unencrypted Non-C2 Protocol
+Outbound Internet Network Traffic,Network,Exfiltration Over Web Service
+Outbound Internet Network Traffic,Network,Exfiltration to Cloud Storage
+Outbound Internet Network Traffic,Network,Exfiltration to Code Repository
+Outbound Internet Network Traffic,Network,External Proxy
+Outbound Internet Network Traffic,Network,Fallback Channels
+Outbound Internet Network Traffic,Network,File Transfer Protocols
+Outbound Internet Network Traffic,Network,Ingress Tool Transfer
+Outbound Internet Network Traffic,Network,Mail Protocols
+Outbound Internet Network Traffic,Network,Malicious Link
+Outbound Internet Network Traffic,Network,Multi-Stage Channels
+Outbound Internet Network Traffic,Network,Multi-hop Proxy
+Outbound Internet Network Traffic,Network,Non-Application Layer Protocol
+Outbound Internet Network Traffic,Network,Non-Standard Port
+Outbound Internet Network Traffic,Network,Protocol Tunneling
+Outbound Internet Network Traffic,Network,Remote Access Tools
+Outbound Internet Network Traffic,Network,Symmetric Cryptography
+Outbound Internet Network Traffic,Network,Web Protocols
+Outbound Internet Network Traffic,Network,Web Service
+Outbound Network Traffic,Network,Application Layer Protocol
+Outbound Network Traffic,Network,Asymmetric Cryptography
+Outbound Network Traffic,Network,BITS Jobs
+Outbound Network Traffic,Network,DNS
+Outbound Network Traffic,Network,Data Encoding
+Outbound Network Traffic,Network,Data Obfuscation
+Outbound Network Traffic,Network,Domain Fronting
+Outbound Network Traffic,Network,Drive-by Compromise
+Outbound Network Traffic,Network,Dynamic Resolution
+Outbound Network Traffic,Network,Encrypted Channel
+Outbound Network Traffic,Network,Exfiltration Over Asymmetric Encrypted Non-C2 Protocol
+Outbound Network Traffic,Network,Exfiltration Over Symmetric Encrypted Non-C2 Protocol
+Outbound Network Traffic,Network,Exfiltration Over Unencrypted Non-C2 Protocol
+Outbound Network Traffic,Network,Exfiltration Over Web Service
+Outbound Network Traffic,Network,Exfiltration to Cloud Storage
+Outbound Network Traffic,Network,Exfiltration to Code Repository
+Outbound Network Traffic,Network,External Proxy
+Outbound Network Traffic,Network,Fallback Channels
+Outbound Network Traffic,Network,File Transfer Protocols
+Outbound Network Traffic,Network,Ingress Tool Transfer
+Outbound Network Traffic,Network,Mail Protocols
+Outbound Network Traffic,Network,Malicious Link
+Outbound Network Traffic,Network,Multi-Stage Channels
+Outbound Network Traffic,Network,Multi-hop Proxy
+Outbound Network Traffic,Network,Non-Application Layer Protocol
+Outbound Network Traffic,Network,Non-Standard Port
+Outbound Network Traffic,Network,Protocol Tunneling
+Outbound Network Traffic,Network,Remote Access Tools
+Outbound Network Traffic,Network,Symmetric Cryptography
+Outbound Network Traffic,Network,Web Protocols
+Outbound Network Traffic,Network,Web Service
+Partition Table,System,Disk Content Wipe
+Partition Table,System,Disk Structure Wipe
+Password,File,Password Cracking
+Password,File,Password Guessing
+Password,File,Password Spraying
+Process,Process,Disable or Modify Tools
+Process,Process,Exploitation for Credential Access
+Process,Process,LSA Secrets
+Process,Process,LSASS Memory
+Process,Process,Modify Authentication Process
+Process,Process,Netsh Helper DLL
+Process,Process,Scheduled Task
+Process,Process,Scheduled Task/Job
+Process,Process,Security Account Manager
+Process,Process,System Owner/User Discovery
+Process,Process,Transport Agent
+Process,Process,Use Alternate Authentication Material
+Process,Process,Web Shell
+Process Code Segment,Process,Credential API Hooking
+Process Code Segment,Process,Exploitation for Client Execution
+Process Code Segment,Process,Exploitation for Credential Access
+Process Code Segment,Process,Exploitation for Defense Evasion
+Process Code Segment,Process,Exploitation for Privilege Escalation
+Process Code Segment,Process,Exploitation of Remote Services
+Process Code Segment,Process,Process Hollowing
+Process Segment,Process,Credential API Hooking
+Process Segment,Process,Drive-by Compromise
+Process Segment,Process,Exploit Public-Facing Application
+Process Segment,Process,Exploitation for Client Execution
+Process Segment,Process,Exploitation for Credential Access
+Process Segment,Process,Exploitation for Defense Evasion
+Process Segment,Process,Exploitation for Privilege Escalation
+Process Segment,Process,Exploitation of Remote Services
+Process Segment,Process,Mavinject
+Process Segment,Process,Process Hollowing
+Process Segment,Process,Reflective Code Loading
+Process Segment,Process,System Owner/User Discovery
+RPC Network Traffic,Network,Kerberoasting
+Removable Media Device,System,Communication Through Removable Media
+Removable Media Device,System,Data from Removable Media
+Removable Media Device,System,Exfiltration over USB
+Removable Media Device,System,Replication Through Removable Media
+Secondary Storage,System,Cloud Storage Object Discovery
+Service Application,System,Executable Installer File Permissions Weakness
+Service Application,System,Exploitation for Credential Access
+Service Application,System,Run Virtual Instance
+Service Application,System,Run Virtual Instance
+Service Application,System,Services File Permissions Weakness
+Service Application,System,Software Deployment Tools
+Service Application,System,Web Portal Capture
+Service Application Process,System,Exploitation for Credential Access
+Service Application Process,System,LSASS Memory
+Service Application Process,System,Modify Authentication Process
+Service Application Process,System,Security Account Manager
+Service Application Process,System,System Owner/User Discovery
+Service Application Process,System,Transport Agent
+Service Application Process,System,Use Alternate Authentication Material
+Session,Identity,External Remote Services
+Session,Identity,Make and Impersonate Token
+Session,Identity,RDP Hijacking
+Session,Identity,Remote Desktop Protocol
+Session,Identity,Remote Service Session Hijacking
+Session,Identity,SSH
+Session,Identity,SSH Hijacking
+Session,Identity,Trusted Relationship
+Software,System,Add-ins
+Software,System,Add-ins
+Software,System,Application Shimming
+Software,System,Bootkit
+Software,System,Component Firmware
+Software,System,Compromise Host Software Binary
+Software,System,Compromise Software Dependencies and Development Tools
+Software,System,Compromise Software Supply Chain
+Software,System,Executable Installer File Permissions Weakness
+Software,System,Exploitation for Credential Access
+Software,System,IIS Components
+Software,System,LSASS Driver
+Software,System,MMC
+Software,System,MSBuild
+Software,System,ROMMONkit
+Software,System,Rootkit
+Software,System,Run Virtual Instance
+Software,System,Run Virtual Instance
+Software,System,SQL Stored Procedures
+Software,System,Services File Permissions Weakness
+Software,System,Software Deployment Tools
+Software,System,Software Deployment Tools
+Software,System,Software Extensions
+Software,System,System Firmware
+Software,System,Time Based Evasion
+Software,System,Web Portal Capture
+Stack Frame,Process,Exploitation for Client Execution
+Stack Frame,Process,Exploitation for Credential Access
+Stack Frame,Process,Exploitation for Defense Evasion
+Stack Frame,Process,Exploitation for Privilege Escalation
+Stack Frame,Process,Exploitation of Remote Services
+Storage,System,Cloud Storage Object Discovery
+Storage,System,Hidden File System
+Subroutine,Process,SQL Stored Procedures
+System Call,Process,AppCert DLLs
+System Call,Process,AppInit DLLs
+System Call,Process,Application Window Discovery
+System Call,Process,Asynchronous Procedure Call
+System Call,Process,Bypass User Account Control
+System Call,Process,CMSTP
+System Call,Process,Compiled HTML File
+System Call,Process,Control Panel
+System Call,Process,Credentials from Web Browsers
+System Call,Process,Deobfuscate/Decode Files or Information
+System Call,Process,Dynamic-link Library Injection
+System Call,Process,Elevated Execution with Prompt
+System Call,Process,Local Data Staging
+System Call,Process,Match Legitimate Resource Name or Location
+System Call,Process,Mavinject
+System Call,Process,Mshta
+System Call,Process,Native API
+System Call,Process,Parent PID Spoofing
+System Call,Process,Process Discovery
+System Call,Process,Process Doppelgänging
+System Call,Process,Ptrace System Calls
+System Call,Process,Query Registry
+System Call,Process,Remote System Discovery
+System Call,Process,Rundll32
+System Call,Process,SQL Stored Procedures
+System Call,Process,Scheduled Task/Job
+System Call,Process,Screen Capture
+System Call,Process,Security Software Discovery
+System Call,Process,System Information Discovery
+System Call,Process,System Network Configuration Discovery
+System Call,Process,System Network Connections Discovery
+System Call,Process,System Owner/User Discovery
+System Call,Process,System Owner/User Discovery
+System Call,Process,System Service Discovery
+System Call,Process,System Time Discovery
+System Call,Process,Thread Execution Hijacking
+System Call,Process,Thread Local Storage
+System Call,Process,Time Based Evasion
+System Call,Process,VDSO Hijacking
+System Call,Process,Windows Management Instrumentation
+System Call,Process,XSL Script Processing
+System Configuration Database,Configuration,Add-ins
+System Configuration Database,Configuration,Component Object Model Hijacking
+System Configuration Database,Configuration,Credentials in Registry
+System Configuration Database,Configuration,Elevated Execution with Prompt
+System Configuration Database,Configuration,Hidden File System
+System Configuration Database,Configuration,Hidden Window
+System Configuration Database,Configuration,Image File Execution Options Injection
+System Configuration Database,Configuration,MMC
+System Configuration Database,Configuration,Modify Registry
+System Configuration Database,Configuration,Query Registry
+System Configuration Database,Configuration,Rogue Domain Controller
+System Configuration Database,Configuration,System Language Discovery
+System Configuration Database,Configuration,Windows Service
+System Firmware,System,ROMMONkit
+System Firmware,System,System Firmware
+System Init Configuration,Configuration,RC Scripts
+System Init Configuration,Configuration,Registry Run Keys / Startup Folder
+System Init Configuration,Configuration,Safe Mode Boot
+System Init Configuration,Configuration,Services Registry Permissions Weakness
+System Init Configuration,Configuration,Startup Items
+URL,Network,Drive-by Compromise
+URL,Network,Malicious Link
+URL,Network,Spearphishing Link
+URL,Network,Spearphishing via Service
+User Account,Identity,Account Access Removal
+User Account,Identity,Account Manipulation
+User Account,Identity,Additional Cloud Roles
+User Account,Identity,Additional Email Delegate Permissions
+User Account,Identity,Cloud Account
+User Account,Identity,Cloud Account
+User Account,Identity,Cloud Accounts
+User Account,Identity,Create Account
+User Account,Identity,Default Accounts
+User Account,Identity,Domain Account
+User Account,Identity,Domain Account
+User Account,Identity,Domain Accounts
+User Account,Identity,Local Account
+User Account,Identity,Local Account
+User Account,Identity,Local Accounts
+User Account,Identity,Valid Accounts
+User Init Configuration File,File,Hidden Users
+User Init Configuration File,File,Unix Shell Configuration Modification
+Windows Registry Key,File,Impair Command History Logging

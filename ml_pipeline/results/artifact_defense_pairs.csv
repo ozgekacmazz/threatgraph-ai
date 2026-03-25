@@ -1,0 +1,163 @@
+﻿artifact,category,defense
+Access Control Configuration,Configuration,Access Modeling
+Access Control Configuration,Configuration,Network Traffic Policy Mapping
+Access Token,Identity,Token Binding
+Access Token,Identity,Token-based Authentication
+Application Configuration,Configuration,Application Configuration Hardening
+Application Configuration,Configuration,Disable Remote Access
+Boot Loader,System,Bootloader Authentication
+Certificate File,File,Certificate Analysis
+Configuration Resource,Configuration,Configuration Inventory
+Configuration Resource,Configuration,Restore Configuration
+Container Image,System,Container Image Analysis
+Create File,File,File Creation Analysis
+Create Process,Process,Executable Allowlisting
+Create Process,Process,Executable Denylisting
+Create Process,Process,Hardware-based Process Isolation
+Create Process,Process,Process Spawn Analysis
+Credential,Identity,Authentication Cache Invalidation
+Credential,Identity,Credential Compromise Scope Analysis
+Credential,Identity,Credential Hardening
+Credential,Identity,Credential Revocation
+Credential,Identity,Credential Rotation
+Credential,Identity,Credential Transmission Scoping
+Credential,Identity,Decoy User Credential
+Credential,Identity,Multi-factor Authentication
+Credential,Identity,Reissue Credential
+DNS Lookup,Network,DNS Traffic Analysis
+DNS Network Traffic,Network,DNS Denylisting
+Database,File,Data Inventory
+Database,File,Restore Database
+Database Query,Configuration,Database Query String Analysis
+Database Record,File,Content Quarantine
+Decoy Artifact,Misc,Decoy Environment
+Digital Camera,System,Video Surveillance
+Digital System,System,System Vulnerability Assessment
+Directory,Configuration,Local File Permissions
+Directory Service,Configuration,Domain Trust Policy
+Document File,File,Data Inventory
+Document File,File,Dynamic Analysis
+Document File,File,Emulated File Analysis
+Domain User Account,Identity,Domain Account Monitoring
+Email,Network,Email Filtering
+Email,Network,Email Removal
+Email,Network,Homoglyph Detection
+Email,Network,Restore Email
+Email,Network,Sender MTA Reputation Analysis
+Email,Network,Sender Reputation Analysis
+Event Log,Configuration,Operational Process Monitoring
+Executable File,File,Dynamic Analysis
+Executable File,File,Emulated File Analysis
+Executable File,File,Executable Allowlisting
+Executable File,File,Executable Denylisting
+File,File,Content Filtering
+File,File,Content Modification
+File,File,Content Quarantine
+File,File,Decoy File
+File,File,File Analysis
+File,File,File Encryption
+File,File,File Eviction
+File,File,File Integrity Monitoring
+File,File,Local File Permissions
+File,File,Remote File Access Mediation
+File,File,Restore File
+File Section,File,File Format Verification
+File Transfer Network Traffic,Network,File Carving
+Firmware,System,Firmware Behavior Analysis
+Firmware,System,Firmware Embedded Monitoring Code
+Firmware,System,Firmware Verification
+Hardware Device,System,Hardware Component Inventory
+Host,System,Restore Network Access
+Identifier,Identity,Identifier Activity Analysis
+Inbound Internet Network Traffic,Network,Inbound Session Volume Analysis
+Inbound Network Traffic,Network,Inbound Traffic Filtering
+Input Device,System,IO Port Restriction
+Input Device,System,Input Device Analysis
+Intranet Administrative Network Traffic,Network,Administrative Network Activity Analysis
+Intranet IPC Network Traffic,Network,IPC Traffic Analysis
+Intranet Network Traffic,Network,Connection Attempt Analysis
+Job Schedule,Configuration,Scheduled Job Analysis
+Local User Account,Identity,Local Account Monitoring
+Log,Configuration,Application Exception Monitoring
+Mail Server,System,Email Removal
+Network Node,System,Endpoint Health Beacon
+Network Node,System,Logical Link Mapping
+Network Node,System,Network Node Inventory
+Network Node,System,Physical Link Mapping
+Network Resource,System,Decoy Network Resource
+Network Resource,System,Network Resource Access Mediation
+Network Traffic,Network,Application Protocol Command Analysis
+Network Traffic,Network,Client-server Payload Profiling
+Network Traffic,Network,Network Traffic Community Deviation
+Network Traffic,Network,Network Traffic Filtering
+Network Traffic,Network,Network Traffic Signature Analysis
+Network Traffic,Network,Per Host Download-Upload Ratio Analysis
+Network Traffic,Network,Protocol Metadata Anomaly Detection
+Network Traffic,Network,Remote Terminal Session Detection
+Network Traffic,Network,User Geolocation Logon Pattern Analysis
+Operating System File,File,System File Analysis
+Operating System Process,Process,System Daemon Monitoring
+Outbound Internet DNS Lookup Traffic,Network,DNS Allowlisting
+Outbound Internet DNS Lookup Traffic,Network,DNS Traffic Analysis
+Outbound Internet DNS Lookup Traffic,Network,Forward Resolution Domain Denylisting
+Outbound Internet DNS Lookup Traffic,Network,Reverse Resolution IP Denylisting
+Outbound Internet Network Traffic,Network,Relay Pattern Analysis
+Outbound Network Traffic,Network,Outbound Traffic Filtering
+Partition Table,System,Disk Partitioning
+Password,File,Change Default Password
+Password,File,One-time Password
+Password,File,Password Authentication
+Password,File,Password Rotation
+Password,File,Strong Password Policy
+Process,Process,Application-based Process Isolation
+Process,Process,Hardware-based Process Isolation
+Process,Process,Host Reboot
+Process,Process,Host Shutdown
+Process,Process,Kernel-based Process Isolation
+Process,Process,Process Lineage Analysis
+Process,Process,Process Self-Modification Detection
+Process,Process,Process Spawn Analysis
+Process,Process,Process Suspension
+Process,Process,Process Termination
+Process,Process,System Call Filtering
+Process Code Segment,Process,Memory Boundary Tracking
+Process Code Segment,Process,Process Code Segment Verification
+Process Segment,Process,Process Segment Execution Prevention
+Process Segment,Process,Segment Address Offset Randomization
+RPC Network Traffic,Network,RPC Traffic Analysis
+Removable Media Device,System,IO Port Restriction
+Secondary Storage,System,Disk Erasure
+Secondary Storage,System,Disk Formatting
+Secondary Storage,System,Hardware-based Write Protection
+Service Application,System,Service Binary Verification
+Service Application Process,System,Web Session Access Mediation
+Session,Identity,Session Termination
+Software,System,Asset Vulnerability Enumeration
+Software,System,Restore Software
+Software,System,Software Inventory
+Software,System,Software Update
+Stack Frame,Process,Shadow Stack Comparisons
+Stack Frame,Process,Stack Frame Canary Validation
+Storage,System,Disk Encryption
+Subroutine,Process,Application-based Process Isolation
+Subroutine,Process,Credential Scrubbing
+Subroutine,Process,Domain Logic Validation
+Subroutine,Process,Trusted Library
+Subroutine,Process,Variable Initialization
+System Call,Process,System Call Analysis
+System Call,Process,System Call Filtering
+System Configuration Database,Configuration,System Configuration Permissions
+System Firmware,System,System Firmware Verification
+System Init Configuration,Configuration,System Init Config Analysis
+URL,Network,Homoglyph Detection
+URL,Network,URL Analysis
+URL,Network,URL Reputation Analysis
+User Account,Identity,Access Modeling
+User Account,Identity,Account Locking
+User Account,Identity,Agent Authentication
+User Account,Identity,Change Default Password
+User Account,Identity,Restore User Account Access
+User Account,Identity,Unlock Account
+User Account,Identity,User Account Permissions
+User Init Configuration File,File,User Session Init Config Analysis
+Windows Registry Key,File,Registry Key Deletion

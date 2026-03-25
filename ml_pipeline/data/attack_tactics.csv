@@ -1,0 +1,55 @@
+attack,tactic
+Application Access Token,Credential Access
+Application Access Token,Credential Access
+Browser Session Hijacking,Lateral Movement
+Component Object Model Hijacking,Lateral Movement
+Create Process with Token,Privilege Escalation
+Create Process with Token,Privilege Escalation
+Create Process with Token,Credential Access
+Create Process with Token,Credential Access
+Dylib Hijacking,Lateral Movement
+Dynamic Linker Hijacking,Lateral Movement
+Exploitation of Remote Services,Lateral Movement
+Exploitation of Remote Services,Lateral Movement
+External Remote Services,Lateral Movement
+External Remote Services,Lateral Movement
+External Remote Services,Lateral Movement
+External Remote Services,Lateral Movement
+Golden Ticket,Credential Access
+Golden Ticket,Credential Access
+Make and Impersonate Token,Defense Evasion
+Make and Impersonate Token,Credential Access
+Make and Impersonate Token,Credential Access
+Path Interception by Search Order Hijacking,Lateral Movement
+RDP Hijacking,Lateral Movement
+RDP Hijacking,Lateral Movement
+RDP Hijacking,Lateral Movement
+Remote Desktop Protocol,Lateral Movement
+Remote Desktop Protocol,Lateral Movement
+Remote Service Session Hijacking,Lateral Movement
+Remote Service Session Hijacking,Lateral Movement
+Remote Service Session Hijacking,Lateral Movement
+Remote Services,Lateral Movement
+Remote Services,Lateral Movement
+SIP and Trust Provider Hijacking,Lateral Movement
+SSH,Lateral Movement
+SSH,Lateral Movement
+SSH Hijacking,Lateral Movement
+SSH Hijacking,Lateral Movement
+SSH Hijacking,Lateral Movement
+Steal Application Access Token,Credential Access
+Steal Application Access Token,Credential Access
+Steal Application Access Token,Credential Access
+Steal Web Session Cookie,Credential Access
+Steal Web Session Cookie,Credential Access
+Steal Web Session Cookie,Credential Access
+Steal or Forge Kerberos Tickets,Credential Access
+Steal or Forge Kerberos Tickets,Credential Access
+Steal or Forge Kerberos Tickets,Credential Access
+Thread Execution Hijacking,Lateral Movement
+Token Impersonation/Theft,Credential Access
+Token Impersonation/Theft,Credential Access
+Trusted Relationship,Defense Evasion
+Trusted Relationship,Defense Evasion
+VDSO Hijacking,Lateral Movement
+Web Session Cookie,Credential Access

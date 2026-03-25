@@ -1,0 +1,44 @@
+Attack Model Comparison
+=======================
+
+Model: Logistic Regression
+accuracy: 0.8793
+precision: 0.8187
+recall: 0.8284
+f1-score: 0.8235
+roc-auc: 0.9520
+confusion matrix:
+[[297  31]
+ [ 29 140]]
+
+Model: Random Forest
+accuracy: 0.9336
+precision: 0.8736
+recall: 0.9408
+f1-score: 0.9060
+roc-auc: 0.9763
+confusion matrix:
+[[305  23]
+ [ 10 159]]
+
+Model: KNN
+accuracy: 0.8974
+precision: 0.8471
+recall: 0.8521
+f1-score: 0.8496
+roc-auc: 0.9580
+confusion matrix:
+[[302  26]
+ [ 25 144]]
+
+Model: XGBoost
+accuracy: 0.9215
+precision: 0.8421
+recall: 0.9467
+f1-score: 0.8914
+roc-auc: 0.9701
+confusion matrix:
+[[298  30]
+ [  9 160]]
+
+Best model: Random Forest
