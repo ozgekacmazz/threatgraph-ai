@@ -1,150 +1,190 @@
-# Cyber KG ML System
+ThreatGraph AI
 
-Production-quality academic scaffold for a cybersecurity analysis platform with:
+Knowledge Graph + Machine Learning ile Siber Saldırı Analizi ve Tahmin Sistemi
 
-- FastAPI backend
-- React frontend
-- Neo4j knowledge graph access layer
-- Rule-based and similarity-based mapping
-- Attack reasoning hooks
-- Random Forest ranking hooks
-- Defense recommendation hooks
-- Low-confidence abstention handling
-- `.env` configuration and logging
+ThreatGraph AI, siber güvenlik analizini Knowledge Graph (Neo4j) ve Machine Learning (Random Forest) ile birleştiren hibrit bir karar destek sistemidir.
 
-## Folder structure
+Bu sistemin amacı, verilen bir artifact (örneğin: dns cache, access token) üzerinden olası saldırıları, saldırı akışını, savunma mekanizmalarını ve en olası saldırı tahminlerini üretmektir.
 
-```text
-cyber-kg-ml-system/
-|-- analysis/
-|   |-- artifacts/
-|   |-- models/
-|   `-- README.md
-|-- backend/
-|   |-- app/
-|   |   |-- api/
-|   |   |   `-- routes.py
-|   |   |-- core/
-|   |   |   |-- config.py
-|   |   |   `-- logging_config.py
-|   |   |-- db/
-|   |   |   `-- neo4j_client.py
-|   |   |-- schemas/
-|   |   |   |-- request_models.py
-|   |   |   `-- response_models.py
-|   |   |-- services/
-|   |   |   |-- analysis_service.py
-|   |   |   |-- defense_service.py
-|   |   |   |-- mapping_service.py
-|   |   |   |-- ml_service.py
-|   |   |   `-- reasoning_service.py
-|   |   |-- utils/
-|   |   |   `-- helpers.py
-|   |   `-- main.py
-|   |-- .env.example
-|   `-- requirements.txt
-|-- docs/
-|   `-- example_api_call.md
-|-- frontend/
-|   |-- .env.example
-|   |-- package.json
-|   |-- vite.config.js
-|   `-- src/
-`-- README.md
-```
+Proje Amacı
 
-## Backend start
+Geleneksel siber güvenlik sistemleri genellikle ikiye ayrılır:
 
-Run these commands from the repository root:
+Rule-based sistemler
+Machine Learning tabanlı sistemler
 
-```powershell
+Bu proje, bu iki yaklaşımı birleştirerek daha güçlü ve açıklanabilir bir yapı oluşturmayı hedefler.
+
+Amaç:
+
+Saldırıları sadece tespit etmek değil
+Nasıl ilerlediğini anlamak
+Ve gelecekteki saldırıları tahmin etmek
+Sistem Mimarisi
+
+Frontend (React)
+→ FastAPI Backend
+→ Mapping Service
+→ Neo4j Graph Reasoning
+→ Machine Learning (Random Forest)
+→ Defense Recommendation
+
+Temel Özellikler
+Artifact Analizi
+Kullanıcıdan alınan artifact normalize edilir ve en uygun canonical artifact ile eşleştirilir.
+Graph Reasoning (Neo4j)
+Direct attack ilişkileri bulunur
+Tactic ilişkileri çıkarılır
+Next tactic akışı hesaplanır
+Defense önerileri belirlenir
+Machine Learning
+Graph tabanlı feature’lar kullanılır
+Multi-label attack prediction yapılır
+Top-5 saldırı tahmini üretilir
+Confidence ve Abstention
+Sistem düşük güven durumunda tahmin yapmaz
+Gereksiz kesinlikten kaçınır
+Örnek Senaryo
+
+Girdi:
+
+{
+  "artifact": "dns cache",
+  "description": "Observed DNS cache anomalies indicating possible exfiltration"
+}
+
+Çıktı:
+
+Matched Artifact: DNS Lookup
+Direct Attack: Data Exfiltration
+Tactic: Collection
+Next Tactic: Exfiltration
+Defense: DNS Monitoring
+ML Prediction: Top attack listesi
+Backend Servisleri
+
+analysis_service
+Sistemin ana orchestrator katmanıdır. Tüm pipeline’ı yönetir.
+
+mapping_service
+Artifact eşleme işlemlerini gerçekleştirir. Rule-based ve similarity tabanlı çalışır.
+
+reasoning_service
+Neo4j graph üzerinden saldırı ilişkilerini ve akışları çıkarır.
+
+ml_service
+Random Forest modeli ile saldırı tahmini yapar.
+
+defense_service
+Graph verisine dayanarak savunma önerileri üretir.
+
+Knowledge Graph Yapısı
+
+Node tipleri:
+
+Artifact
+OffenseTech
+DefenseTech
+Tactic
+
+Relationship tipleri:
+
+OFF_REL
+DEF_REL
+HAS_TECHNIQUE
+NEXT_TACTIC
+Machine Learning Pipeline
+
+Kullanılan feature’lar:
+
+attack_count
+defense_count
+impact_count
+centrality_score
+category
+
+Model:
+
+Random Forest
+Multi-label classification
+
+Çıktı:
+
+Top-5 attack prediction
+Confidence score
+Frontend
+
+Frontend React + Vite ile geliştirilmiştir.
+
+Özellikler:
+
+Artifact giriş paneli
+Analiz sonucu kartları
+Canlı graph visualization
+Senaryo bazlı test ekranı
+Kullanılan Teknolojiler
+
+Backend:
+
+FastAPI
+Python
+Neo4j
+
+Machine Learning:
+
+scikit-learn
+pandas
+numpy
+
+Frontend:
+
+React
+Vite
+JavaScript
+Kurulum
+
+Backend:
+
 cd backend
-python -m venv .venv
-.venv\Scripts\activate
 pip install -r requirements.txt
-copy .env.example .env
 uvicorn app.main:app --reload
-```
 
-Backend dev URL:
+Frontend:
 
-```text
-http://localhost:8000
-```
-
-## Frontend start
-
-Important: `npm run dev` must be run inside `frontend/`, not inside `backend/`.
-
-```powershell
 cd frontend
 npm install
-copy .env.example .env
 npm run dev
-```
+API Endpointleri
 
-Frontend dev URL:
+GET /api/artifacts
+Canonical artifact listesini döner.
 
-```text
-http://localhost:5173
-```
+POST /api/analyze
+Artifact analizi yapar.
 
-## Frontend env
+POST /api/graph/context
+Graph visualization için veri döner.
 
-Expected Vite variable:
+Güçlü Yanlar
+Knowledge Graph ve Machine Learning birlikte kullanılır
+Açıklanabilir sonuçlar üretir
+Saldırı akışını modelleyebilir
+Savunma önerileri sunar
+Confidence tabanlı karar verir
+Sınırlamalar
+Dataset sınırlı olabilir
+Nadir saldırılar model tarafından öğrenilemeyebilir
+Graph genişledikçe performans değişebilir
+Gelecek Geliştirmeler
+Daha büyük veri seti
+Graph Neural Network entegrasyonu
+SIEM sistemleri ile entegrasyon
+Gerçek zamanlı threat intelligence
+Geliştirici
 
-```text
-VITE_API_BASE_URL=http://localhost:8000/api
-```
+Özge Kaçmaz
+Computer Engineering Student
 
-The frontend reads this variable from `frontend/.env` and falls back to
-`http://localhost:8000/api` when it is missing.
+Sonuç
 
-## Integration flow
-
-### Analysis request
-
-`/analiz` sends:
-
-```json
-{
-  "artifact_name": "...",
-  "description": "...",
-  "analysis_mode": "new"
-}
-```
-
-or
-
-```json
-{
-  "artifact_name": "...",
-  "description": "...",
-  "analysis_mode": "known"
-}
-```
-
-### Graph request
-
-After a successful analysis, the frontend requests graph context with:
-
-```json
-{
-  "artifact_name": "...",
-  "matched_artifact": "...",
-  "analysis_mode": "new"
-}
-```
-
-`matched_artifact` is taken from the analysis response when available.
-
-## Notes
-
-- The scaffold does not fabricate attack or mitigation data.
-- Frontend routes remain:
-  - `/`
-  - `/analiz`
-  - `/mimari`
-  - `/graf`
-  - `/senaryolar`
-- Live graph rendering uses `reactflow`.
+ThreatGraph AI, siber saldırı analizini sadece sonuç üretmekten çıkarıp, süreci açıklayan ve geleceği tahmin eden bir sistem haline getirir.
