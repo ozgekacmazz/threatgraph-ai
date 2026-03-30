@@ -3,23 +3,94 @@ import GraphLegend from "./GraphLegend";
 import GraphCanvasPlaceholder from "./GraphCanvasPlaceholder";
 import SummaryGraphRenderer from "./graph/SummaryGraphRenderer";
 import FullGraphRenderer from "./graph/FullGraphRenderer";
-import { buildPreviewSections } from "./graph/graphModel";
 import { buildSummaryGraph } from "./graph/visNetworkAdapter";
 
-function CompactGraphPreview({ graph }) {
-  const sections = buildPreviewSections(graph);
+function formatList(values, fallback) {
+  if (!values?.length) {
+    return fallback;
+  }
+
+  return values.slice(0, 3).join(", ");
+}
+
+function CompactGraphEmptyState({ title, description, tags = [] }) {
+  return (
+    <div className="graph-empty-state">
+      <div className="graph-empty-state-copy">
+        <strong>{title}</strong>
+        <p>{description}</p>
+      </div>
+      {tags.length ? (
+        <div className="graph-empty-state-tags">
+          {tags.map((tag) => (
+            <span key={tag}>{tag}</span>
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function CompactGraphPreview({ graph, summary }) {
+  const matchedArtifact = summary?.matchedArtifact || graph.focus?.matched_artifact || graph.focus?.artifact;
+  const modeLabel = summary?.mode === "known" ? "Mevcut artifact analizi" : "Yeni artifact analizi";
+  const summaryBlocks = [
+    {
+      label: "Girdi",
+      value: summary?.inputArtifact || graph.focus?.artifact || "Belirtilmedi"
+    },
+    {
+      label: "Eşleşme",
+      value: summary?.matchedCategory
+        ? `${matchedArtifact} • ${summary.matchedCategory}`
+        : matchedArtifact || "Eşleşme bulunamadı"
+    },
+    {
+      label: "Öncelikli saldırılar",
+      value: formatList(summary?.directAttacks, "Doğrudan saldırı sinyali bulunamadı")
+    },
+    {
+      label: "Doğrudan tactic",
+      value: formatList(summary?.directTactics, "Doğrudan tactic sinyali bulunamadı")
+    },
+    {
+      label: "Olası sonraki tactic",
+      value: formatList(summary?.nextTactics, "Sonraki tactic sinyali bulunamadı")
+    },
+    {
+      label: "Savunma odağı",
+      value: formatList(summary?.defenses, "Öne çıkan savunma önerisi bulunamadı")
+    }
+  ];
+
+  if (summary?.mayImpactArtifacts?.length || summary?.mayImpactAttacks?.length) {
+    summaryBlocks.push({
+      label: "Etki yayılımı",
+      value: summary?.mayImpactArtifacts?.length
+        ? `${formatList(summary.mayImpactArtifacts, "")}${
+            summary?.mayImpactAttacks?.length
+              ? ` • ${formatList(summary.mayImpactAttacks, "Ek saldırı sinyali yok")}`
+              : ""
+          }`
+        : formatList(summary?.mayImpactAttacks, "Ek yayılım sinyali yok")
+    });
+  }
 
   return (
-    <div className="graph-preview-card">
+    <div className="graph-preview-card graph-preview-card-summary">
       <div className="graph-preview-head">
-        <strong>{graph.focus?.matched_artifact || graph.focus?.artifact || "ThreatGraph Preview"}</strong>
-        <p>Dar panel için sadeleştirilmiş karar zinciri ön izlemesi</p>
+        <strong>{matchedArtifact || "ThreatGraph özeti"}</strong>
+        <p>
+          {summary?.lowConfidenceReason
+            ? "Karar desteği düşük güven notuyla birlikte sunuluyor."
+            : `${modeLabel} için saldırı, tactic, savunma ve etki yayılımı sinyalleri özetleniyor.`}
+        </p>
       </div>
-      <div className="graph-preview-flow">
-        {sections.map((section) => (
-          <div key={section.label} className={`graph-preview-step graph-preview-step-${section.type}`}>
-            <span>{section.label}</span>
-            <strong>{section.items.join(" • ")}</strong>
+      <div className="graph-summary-grid">
+        {summaryBlocks.map((block) => (
+          <div key={block.label} className="graph-summary-block">
+            <span>{block.label}</span>
+            <strong>{block.value}</strong>
           </div>
         ))}
       </div>
@@ -34,6 +105,8 @@ function LiveGraphPanel({
   compact = false,
   emptyTitle,
   emptyDescription,
+  emptyTags,
+  compactSummary,
   viewMode
 }) {
   const resolvedViewMode = viewMode || (compact ? "summary" : "full");
@@ -68,11 +141,15 @@ function LiveGraphPanel({
   }
 
   if (!preparedGraph?.nodes?.length) {
+    if (compact) {
+      return <CompactGraphEmptyState title={emptyTitle} description={emptyDescription} tags={emptyTags} />;
+    }
+
     return <GraphCanvasPlaceholder compact={compact} title={emptyTitle} description={emptyDescription} />;
   }
 
   if (compact) {
-    return <CompactGraphPreview graph={preparedGraph} />;
+    return <CompactGraphPreview graph={preparedGraph} summary={compactSummary} />;
   }
 
   return (

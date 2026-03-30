@@ -4,7 +4,7 @@ import ArchitecturePage from "./pages/ArchitecturePage";
 import AnalysisPage from "./pages/AnalysisPage";
 import GraphPage from "./pages/GraphPage";
 import HomePage from "./pages/HomePage";
-import ScenariosPage from "./pages/ScenariosPage";
+import ScenarioPage from "./pages/ScenarioPage";
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
           <Route path="/analiz" element={<AnalysisPage />} />
           <Route path="/mimari" element={<ArchitecturePage />} />
           <Route path="/graf" element={<GraphPage />} />
-          <Route path="/senaryolar" element={<ScenariosPage />} />
+          <Route path="/senaryolar" element={<ScenarioPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

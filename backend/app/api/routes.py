@@ -4,7 +4,7 @@ import logging
 
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.schemas.request_models import AnalyzeRequest, GraphContextRequest
+from app.schemas.request_models import AnalyzeRequest, GraphContextRequest, ScenarioAnalyzeRequest
 from app.schemas.response_models import AnalyzeResponse, ArtifactOption, GraphContextResponse
 from app.services.analysis_service import AnalysisService, get_analysis_service
 
@@ -44,6 +44,26 @@ async def analyze_artifact_endpoint(
         raise HTTPException(
             status_code=500,
             detail="Analiz işlenemedi. Backend loglarını kontrol edin ve girdi alanlarını yeniden deneyin.",
+        ) from exc
+
+
+@router.post(
+    "/analyze-scenario",
+    response_model=AnalyzeResponse,
+    summary="Analyze a free-text cybersecurity scenario",
+)
+async def analyze_scenario_endpoint(
+    payload: ScenarioAnalyzeRequest,
+    service: AnalysisService = Depends(get_analysis_service),
+) -> AnalyzeResponse:
+    """Interpret a scenario and route it through the existing artifact analysis pipeline."""
+    try:
+        return service.analyze_scenario(payload.text)
+    except Exception as exc:  # pragma: no cover - runtime safety
+        logger.exception("Scenario analysis endpoint failed.")
+        raise HTTPException(
+            status_code=500,
+            detail="Senaryo analizi işlenemedi. Backend loglarını kontrol edin ve metni yeniden deneyin.",
         ) from exc
 
 

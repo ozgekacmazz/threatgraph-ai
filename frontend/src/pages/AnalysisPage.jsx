@@ -12,34 +12,34 @@ const emptyResult = {
   matched_category: "Kategori bilgisi analizden sonra burada gösterilecek.",
   mapping_method: "İşlem bekleniyor",
   confidence_score: "-",
-  direct_attacks: [{ title: "Doğrudan saldırı ilişkileri", description: "Analiz henüz başlatılmadı." }],
-  direct_tactics: [{ title: "Direct tactic ilişkileri", description: "Analiz henüz başlatılmadı." }],
-  next_tactics: [{ title: "Sonraki tactic akışı", description: "Analiz henüz başlatılmadı." }],
-  predicted_attacks_top5: [{ title: "ML sıralaması", description: "Analiz henüz başlatılmadı." }],
+  direct_attacks: [{ title: "Doğrudan saldırılar", description: "Analiz henüz başlatılmadı." }],
+  direct_tactics: [{ title: "Doğrudan tactic'ler", description: "Analiz henüz başlatılmadı." }],
+  next_tactics: [{ title: "Olası sonraki tactic'ler", description: "Analiz henüz başlatılmadı." }],
+  predicted_attacks_top5: [{ title: "Top-5 saldırı tahmini", description: "Analiz henüz başlatılmadı." }],
   defense_suggestions: [{ title: "Savunma önerileri", description: "Analiz henüz başlatılmadı." }],
-  diagnostics: [{ title: "Tanılama bilgileri", description: "İşlem adımları analizden sonra gösterilecek." }],
+  technical_details: null,
   low_confidence_reason: null
 };
 
 const loadingStages = [
-  "Mapping hazırlanıyor",
+  "Eşleşme hazırlanıyor",
   "Graph reasoning çalışıyor",
-  "ML ranking üretiliyor",
+  "ML sıralaması üretiliyor",
   "Savunma önerileri hazırlanıyor"
 ];
 
 const skeletonCards = [
-  { title: "Eşleşen Artifact", emphasis: "primary" },
-  { title: "Güven Skoru", emphasis: "highlight" },
-  { title: "Top-5 Saldırı Tahmini", emphasis: "highlight", lines: 4 },
-  { title: "Diagnostics", lines: 3 }
+  { title: "Eşleşen artifact", emphasis: "primary" },
+  { title: "Güven düzeyi", emphasis: "highlight" },
+  { title: "Top-5 saldırı tahmini", emphasis: "highlight", lines: 4 },
+  { title: "Teknik detaylar", lines: 3 }
 ];
 
 const modes = [
   {
     id: "new",
     label: "Yeni artifact analizi",
-    helper: "Yeni veya serbest biçimli giriş mapping ile en uygun eşleşmeye yönlendirilir."
+    helper: "Yeni veya serbest biçimli giriş, bağlamıyla birlikte en uygun eşleşmeye yönlendirilir."
   },
   {
     id: "known",
@@ -47,6 +47,8 @@ const modes = [
     helper: "Bilinen canonical artifact için doğrudan graph bağlamı kullanılır."
   }
 ];
+
+const graphEmptyTags = ["Artifact", "Attack", "Tactic", "Defense", "Etki yayılımı"];
 
 function persistLatestGraph(graphPayload) {
   if (!graphPayload) {
@@ -102,6 +104,96 @@ function getConfidenceClass(score) {
   return "result-card-confidence-low";
 }
 
+function formatMappingMethod(value) {
+  const method = normalizeText(value, "Belirtilmedi");
+  const labels = {
+    explicit_mapping: "Açık kural eşleşmesi",
+    graph_best_match: "Graph eşleşmesi",
+    lexical_similarity: "Metin benzerliği",
+    semantic_similarity: "Anlamsal benzerlik",
+    hybrid_context_match: "Hibrit bağlam eşleşmesi",
+    fallback_match: "Yedek eşleşme"
+  };
+
+  return labels[method] || method.replace(/_/g, " ");
+}
+
+function formatThresholdLabel(key) {
+  const labels = {
+    low_confidence_threshold: "Düşük güven eşiği",
+    strict_prediction_threshold: "Kesin tahmin eşiği"
+  };
+
+  return labels[key] || key.replace(/_/g, " ");
+}
+
+function formatProcessingStep(step) {
+  const labels = {
+    normalize_input: "Girdi normalize edildi",
+    load_graph_artifacts_and_mapping_rules: "Graph artifact ve eşleşme kuralları yüklendi",
+    resolve_best_artifact: "En uygun artifact eşleşmesi seçildi",
+    persist_best_match: "Eşleşme graph üzerinde kaydedildi",
+    skip_best_match_persistence_for_known_mode: "Mevcut artifact modunda ek kayıt atlandı",
+    fetch_reasoning_summary: "Reasoning özeti çıkarıldı",
+    rank_attacks_with_ml: "ML saldırı sıralaması üretildi",
+    fetch_defense_suggestions: "Savunma önerileri hazırlandı"
+  };
+
+  return labels[step] || step.replace(/_/g, " ");
+}
+
+function formatDataSourceLabel(key) {
+  const labels = {
+    analysis_mode: "Analiz modu",
+    neo4j: "Neo4j durumu",
+    ml_model: "ML model durumu",
+    ml_encoders: "Encoder durumu",
+    analysis_csv: "Analiz veri seti",
+    candidate_match_count: "Aday eşleşme sayısı",
+    matched_rules_count: "Eşleşen kural sayısı",
+    explicit_mapping_used: "Açık kural kullanıldı",
+    graph_signals_found: "Graph sinyali bulundu",
+    ml_candidate_count: "ML aday sayısı",
+    ml_prediction_count: "ML tahmin sayısı",
+    abstention_triggered: "Abstention devrede",
+    abstention_reason_count: "Abstention nedeni",
+    artifact_record_count: "Artifact kaydı sayısı",
+    mapping_rule_count: "Mapping kuralı sayısı",
+    mapping_dominant_source: "Baskın eşleşme kaynağı",
+    direct_attack_count: "Doğrudan saldırı sayısı",
+    may_impact_artifact_count: "Etkilenebilecek varlık sayısı",
+    may_impact_attack_count: "Yayılım kaynaklı saldırı sayısı",
+    direct_tactic_count: "Doğrudan tactic sayısı",
+    next_tactic_count: "Sonraki tactic sayısı",
+    defense_suggestion_count: "Savunma önerisi sayısı"
+  };
+
+  return labels[key] || key.replace(/_/g, " ");
+}
+
+function formatDataSourceValue(value) {
+  const normalized = String(value ?? "").trim();
+  const labels = {
+    true: "Evet",
+    false: "Hayır",
+    configured: "Hazır",
+    not_configured: "Hazır değil",
+    loaded: "Yüklü",
+    not_loaded: "Yüklü değil",
+    new: "Yeni artifact",
+    known: "Mevcut artifact"
+  };
+
+  return labels[normalized] || normalized || "-";
+}
+
+function buildTechnicalPairs(entries, labelFormatter, valueFormatter = (value) => String(value)) {
+  return entries.map(([key, value]) => ({
+    label: labelFormatter(key),
+    value: valueFormatter(value)
+  }));
+}
+
 function AnalysisPage() {
   const [searchParams] = useSearchParams();
   const [mode, setMode] = useState("new");
@@ -127,8 +219,8 @@ function AnalysisPage() {
   const currentLoadingStage = loadingStages[loadingStageIndex] || loadingStages[0];
   const loadingProgress = ((loadingStageIndex + 1) / loadingStages.length) * 100;
   const descriptionHint = description.trim()
-    ? "Açıklama analize dahil edilecek."
-    : "Açıklama olmadan analiz yapılabilir; bağlam eksik olduğunda eşleşme doğruluğu düşebilir.";
+    ? "Açıklama analize dahil edilecek ve bağlamsal eşleşmeyi güçlendirecek."
+    : "Açıklama zorunlu değildir; ancak bağlam eklemek eşleşme ve sıralama kalitesini artırabilir.";
 
   useEffect(() => {
     const presetArtifact = searchParams.get("artifact_name");
@@ -232,65 +324,35 @@ function AnalysisPage() {
       return emptyResult;
     }
 
-    const diagnosticItems = [];
     const processingSteps = result.diagnostics?.processing_steps || [];
     const warnings = result.diagnostics?.warnings || [];
     const thresholds = Object.entries(result.diagnostics?.thresholds || {});
     const dataSources = Object.entries(result.diagnostics?.data_sources || {});
 
-    if (result.diagnostics?.normalized_artifact || result.diagnostics?.normalized_description) {
-      diagnosticItems.push({
-        title: "Normalize giriş",
-        description: `Artifact: ${result.diagnostics?.normalized_artifact || "-"} | Açıklama: ${
-          result.diagnostics?.normalized_description || "-"
-        }`
-      });
-    }
-
-    if (processingSteps.length) {
-      diagnosticItems.push({
-        title: "İşlem adımları",
-        description: processingSteps.join(" → ")
-      });
-    }
-
-    if (thresholds.length) {
-      diagnosticItems.push({
-        title: "Karar eşikleri",
-        description: thresholds.map(([key, value]) => `${key}: ${value}`).join(" | ")
-      });
-    }
-
-    if (dataSources.length) {
-      diagnosticItems.push({
-        title: "Veri kaynakları",
-        description: dataSources.map(([key, value]) => `${key}: ${value}`).join(" | ")
-      });
-    }
-
-    if (warnings.length) {
-      diagnosticItems.push(
-        ...warnings.map((warning, index) => ({
-          title: `Tanılama notu ${index + 1}`,
-          description: warning
-        }))
-      );
-    }
-
     return {
       matched_artifact: normalizeText(result.matched_artifact, "Eşleşme bulunamadı"),
       matched_category: normalizeText(result.matched_category, "Kategori bilgisi üretilemedi"),
-      mapping_method: normalizeText(result.mapping_method, "Belirtilmedi"),
+      mapping_method: formatMappingMethod(result.mapping_method),
       confidence_score: formatConfidence(result.confidence_score, result.confidence_label),
       direct_attacks: result.direct_attacks?.length
-        ? result.direct_attacks.map((attack) => ({ title: normalizeText(attack, "Bilinmeyen attack") }))
-        : [{ title: "Doğrudan saldırı bulunamadı" }],
+        ? result.direct_attacks.map((attack) => ({ title: normalizeText(attack, "Bilinmeyen saldırı") }))
+        : [{ title: "Doğrudan saldırı sinyali bulunamadı" }],
+      may_impact_artifacts: result.may_impact_artifacts?.length
+        ? result.may_impact_artifacts.map((artifact) => ({
+            title: normalizeText(artifact, "Bilinmeyen varlık")
+          }))
+        : [],
+      may_impact_attacks: result.may_impact_attacks?.length
+        ? result.may_impact_attacks.map((attack) => ({
+            title: normalizeText(attack, "Bilinmeyen saldırı")
+          }))
+        : [],
       direct_tactics: result.direct_tactics?.length
         ? result.direct_tactics.map((tactic) => ({ title: normalizeText(tactic, "Bilinmeyen tactic") }))
-        : [{ title: "Doğrudan tactic bulunamadı" }],
+        : [{ title: "Doğrudan tactic sinyali bulunamadı" }],
       next_tactics: result.next_tactics?.length
         ? result.next_tactics.map((tactic) => ({ title: normalizeText(tactic, "Bilinmeyen tactic") }))
-        : [{ title: "Sonraki tactic bulunamadı" }],
+        : [{ title: "Sonraki tactic sinyali bulunamadı" }],
       predicted_attacks_top5: result.predicted_attacks_top5?.length
         ? result.predicted_attacks_top5.map((item, index) => ({
             title: normalizeText(item.attack_name, `Saldırı adayı ${index + 1}`),
@@ -302,7 +364,7 @@ function AnalysisPage() {
                 : null,
             description: normalizeText(
               item.rationale,
-              "Model bu saldırıyı graph-türetilmiş adaylar arasından öncelikli risk olarak öne çıkardı."
+              "Model bu saldırıyı graph kaynaklı adaylar arasından öncelikli risk olarak öne çıkardı."
             ),
             emphasis: index === 0 ? "top" : undefined
           }))
@@ -314,13 +376,45 @@ function AnalysisPage() {
             description: normalizeText(item.description, "Açıklama sağlanmadı")
           }))
         : [{ title: "Savunma önerisi üretilemedi" }],
-      diagnostics: diagnosticItems.length ? diagnosticItems : [{ title: "Tanılama bilgisi üretilemedi" }],
+      technical_details: {
+        normalized_input:
+          result.diagnostics?.normalized_artifact || result.diagnostics?.normalized_description
+            ? [
+                { label: "Artifact", value: result.diagnostics?.normalized_artifact || "-" },
+                { label: "Açıklama", value: result.diagnostics?.normalized_description || "-" }
+              ]
+            : [],
+        warnings,
+        processing_steps: processingSteps.map(formatProcessingStep),
+        thresholds: buildTechnicalPairs(thresholds, formatThresholdLabel, (value) => String(value)),
+        data_sources: buildTechnicalPairs(dataSources, formatDataSourceLabel, formatDataSourceValue)
+      },
       low_confidence_reason:
         result.low_confidence_reason && result.low_confidence_reason.trim()
           ? result.low_confidence_reason
           : null
     };
   }, [result]);
+
+  const compactGraphSummary = useMemo(() => {
+    if (!result) {
+      return null;
+    }
+
+    return {
+      inputArtifact: normalizeText(result.input_artifact, artifactName || "Belirtilmedi"),
+      matchedArtifact: normalizeText(result.matched_artifact, "Eşleşme bulunamadı"),
+      matchedCategory: normalizeText(result.matched_category, "Kategori bilgisi üretilmedi"),
+      directAttacks: result.direct_attacks || [],
+      directTactics: result.direct_tactics || [],
+      nextTactics: result.next_tactics || [],
+      defenses: (result.defense_suggestions || []).map((item) => item.title).filter(Boolean),
+      mayImpactArtifacts: result.may_impact_artifacts || [],
+      mayImpactAttacks: result.may_impact_attacks || [],
+      lowConfidenceReason: result.low_confidence_reason || null,
+      mode
+    };
+  }, [artifactName, mode, result]);
 
   useEffect(() => {
     if (!hasSubmitted || loading || !resultsRef.current) {
@@ -414,8 +508,8 @@ function AnalysisPage() {
       <section className="container page-intro section-panel section-panel-dark">
         <SectionHeader
           eyebrow="ThreatGraph AI Workspace"
-          title="Canlı attack intelligence akışını tek çalışma alanında yönetin"
-          description="Bu ekran analiz formunu, sonuç kartlarını ve canlı Neo4j graph görünümünü tek bir operasyonel workspace içinde birleştirir."
+          title="Artifact analizi, graph reasoning ve ML karar desteğini tek ekranda yönetin"
+          description="Bu ekran; eşleşme, doğrudan saldırılar, etki yayılımı, tactic akışı, savunma önerileri ve güven düzeyini tek bir operasyonel çalışma alanında bir araya getirir."
         />
       </section>
 
@@ -427,7 +521,7 @@ function AnalysisPage() {
         <div className="analysis-main-column">
           <SurfaceCard
             title="Analiz modu seçimi"
-            subtitle="Yeni artifact ve mevcut artifact akışları aynı ürün ekranında farklı davranış kurallarıyla çalışır."
+            subtitle="Yeni artifact ve mevcut artifact akışları aynı ekranda, farklı analiz davranışlarıyla çalışır."
           >
             <div className="mode-toggle" role="tablist" aria-label="Analiz modu">
               {modes.map((item) => (
@@ -453,7 +547,7 @@ function AnalysisPage() {
 
           <SurfaceCard
             title="Artifact girişi"
-            subtitle="İsim ve açıklama birlikte verildiğinde ThreatGraph AI daha güçlü hibrit eşleme üretir."
+            subtitle="İsim ve açıklama birlikte verildiğinde ThreatGraph AI daha güçlü ve daha bağlamsal bir eşleşme üretir."
           >
             <form className="analysis-form-advanced" onSubmit={handleSubmit}>
               <div className="artifact-picker-shell" ref={suggestionsRef}>
@@ -512,8 +606,8 @@ function AnalysisPage() {
 
               <div className="field-help">
                 {mode === "known"
-                  ? "Mevcut artifact modunda canonical artifact listesinden seçim yapmanız önerilir."
-                  : "Daha doğru analiz için İngilizce terimler önerilir (örn: dns cache, access token)"}
+                  ? "Mevcut artifact modunda, doğruluğu korumak için canonical artifact listesinden seçim yapmanız önerilir."
+                  : "İngilizce teknik terimler genellikle daha tutarlı canonical eşleşme verir; ancak Türkçe açıklamalar da çok dilli normalizasyon katmanında yorumlanır."}
               </div>
 
               <label className="field">
@@ -542,7 +636,7 @@ function AnalysisPage() {
                       Analiz başlatılıyor...
                     </>
                   ) : (
-                    "Analizi Başlat ve Graph Oluştur"
+                    "Analizi başlat"
                   )}
                 </button>
                 <span className="inline-status">
@@ -562,24 +656,25 @@ function AnalysisPage() {
 
           <SurfaceCard
             className="analysis-results-panel"
-            title="Karar paneli"
-            subtitle="Gerçek backend çıktısı geldikçe kritik kartlar öne çıkar; graph alanı da aynı analiz bağlamından canlı olarak beslenir."
+            title="Analiz özeti"
+            subtitle="Eşleşme, graph reasoning, etki yayılımı, ML sıralaması ve savunma önerileri burada okunabilir bir karar özeti olarak sunulur."
           >
             <div ref={resultsRef} className="results-anchor">
               {!hasSubmitted && !loading ? (
                 <div className="analysis-status-card analysis-status-card-ready">
                   <div className="analysis-ready-copy">
-                    <strong>Analiz çalışma yüzeyi hazır</strong>
+                    <strong>Analiz alanı hazır</strong>
                     <p>
-                      Bir artifact analizi başlattığınızda eşleşme, confidence, saldırı tahmini,
-                      tanılama ve savunma çıktıları burada ürün kartları olarak oluşacak.
+                      Bir artifact analizi başlattığınızda eşleşme, doğrudan saldırılar, etki
+                      yayılımı, tactic akışı, savunma önerileri ve güven notları burada özetlenecek.
                     </p>
                   </div>
                   <div className="analysis-ready-pills">
                     <span>Eşleşen artifact</span>
+                    <span>Etki yayılımı</span>
                     <span>Top-5 tahmin</span>
-                    <span>Diagnostics</span>
-                    <span>Confidence</span>
+                    <span>Savunma odağı</span>
+                    <span>Güven düzeyi</span>
                   </div>
                 </div>
               ) : null}
@@ -643,38 +738,127 @@ function AnalysisPage() {
 
             <div className={`result-grid${result && !loading ? " result-grid-visible result-grid-enter" : ""}`}>
               <ResultMetricCard
-                title="Eşleşen Artifact"
+                title="Eşleşen artifact"
                 value={displayedResult.matched_artifact}
                 tone="accent"
                 className="result-card-primary"
               />
               <ResultMetricCard title="Kategori" value={displayedResult.matched_category} />
-              <ResultMetricCard title="Eşleme Yöntemi" value={displayedResult.mapping_method} />
+              <ResultMetricCard title="Eşleme yöntemi" value={displayedResult.mapping_method} />
               <ResultMetricCard
-                title="Güven Skoru"
+                title="Güven düzeyi"
                 value={displayedResult.confidence_score}
                 tone="accent"
                 className={`result-card-highlight ${getConfidenceClass(result?.confidence_score)}`.trim()}
               />
-              <ResultMetricCard title="Direct Attacks" items={displayedResult.direct_attacks} />
-              <ResultMetricCard title="Direct Tactics" items={displayedResult.direct_tactics} />
-              <ResultMetricCard title="Next Tactics" items={displayedResult.next_tactics} />
+              <ResultMetricCard title="Doğrudan saldırılar" items={displayedResult.direct_attacks} />
+              {displayedResult.may_impact_artifacts?.length ? (
+                <ResultMetricCard
+                  title="Etkilenebilecek varlıklar"
+                  items={displayedResult.may_impact_artifacts}
+                />
+              ) : null}
+              {displayedResult.may_impact_attacks?.length ? (
+                <ResultMetricCard
+                  title="Yayılım kaynaklı saldırılar"
+                  items={displayedResult.may_impact_attacks}
+                />
+              ) : null}
+              <ResultMetricCard title="Doğrudan tactic'ler" items={displayedResult.direct_tactics} />
+              <ResultMetricCard title="Olası sonraki tactic'ler" items={displayedResult.next_tactics} />
               <ResultMetricCard
-                title="Top-5 Saldırı Tahmini"
+                title="Top-5 saldırı tahmini"
                 items={displayedResult.predicted_attacks_top5}
                 tone="accent"
                 className="result-card-highlight"
               />
-              <ResultMetricCard title="Savunma Önerileri" items={displayedResult.defense_suggestions} />
-              <ResultMetricCard title="Diagnostics" items={displayedResult.diagnostics} />
+              <ResultMetricCard title="Savunma önerileri" items={displayedResult.defense_suggestions} />
               {displayedResult.low_confidence_reason ? (
                 <ResultMetricCard
-                  title="Low-confidence açıklaması"
+                  title="Düşük güven açıklaması"
                   value={displayedResult.low_confidence_reason}
                   tone="accent"
                 />
               ) : null}
             </div>
+
+            {result && !loading ? (
+              <details className="technical-details">
+                <summary>
+                  <div>
+                    <strong>Teknik detaylar</strong>
+                    <p>İşlem adımları ve sistem notları</p>
+                  </div>
+                  <span className="technical-details-toggle">Aç / Kapat</span>
+                </summary>
+
+                <div className="technical-details-body">
+                  {displayedResult.technical_details?.warnings?.length ? (
+                    <section className="technical-details-group">
+                      <h4>Uyarılar</h4>
+                      <ul className="technical-details-list">
+                        {displayedResult.technical_details.warnings.map((warning, index) => (
+                          <li key={`warning-${index}`}>{warning}</li>
+                        ))}
+                      </ul>
+                    </section>
+                  ) : null}
+
+                  {displayedResult.technical_details?.processing_steps?.length ? (
+                    <section className="technical-details-group">
+                      <h4>İşlem adımları</h4>
+                      <ol className="technical-details-list technical-details-list-ordered">
+                        {displayedResult.technical_details.processing_steps.map((step, index) => (
+                          <li key={`step-${index}`}>{step}</li>
+                        ))}
+                      </ol>
+                    </section>
+                  ) : null}
+
+                  {displayedResult.technical_details?.normalized_input?.length ? (
+                    <section className="technical-details-group">
+                      <h4>Normalize giriş</h4>
+                      <div className="technical-pair-grid">
+                        {displayedResult.technical_details.normalized_input.map((item) => (
+                          <div key={item.label} className="technical-pair-card">
+                            <span>{item.label}</span>
+                            <strong>{item.value}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  ) : null}
+
+                  {displayedResult.technical_details?.thresholds?.length ? (
+                    <section className="technical-details-group">
+                      <h4>Karar eşikleri</h4>
+                      <div className="technical-pair-grid">
+                        {displayedResult.technical_details.thresholds.map((item) => (
+                          <div key={item.label} className="technical-pair-card">
+                            <span>{item.label}</span>
+                            <strong>{item.value}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  ) : null}
+
+                  {displayedResult.technical_details?.data_sources?.length ? (
+                    <section className="technical-details-group">
+                      <h4>Sistem verileri</h4>
+                      <div className="technical-pair-grid">
+                        {displayedResult.technical_details.data_sources.map((item) => (
+                          <div key={item.label} className="technical-pair-card">
+                            <span>{item.label}</span>
+                            <strong>{item.value}</strong>
+                          </div>
+                        ))}
+                      </div>
+                    </section>
+                  ) : null}
+                </div>
+              </details>
+            ) : null}
           </SurfaceCard>
         </div>
 
@@ -683,32 +867,34 @@ function AnalysisPage() {
             className={`analysis-graph-panel analysis-graph-panel-emphasis${
               graphLoading ? " analysis-graph-panel-loading" : ""
             }`}
-            title="Canlı graph paneli"
-            subtitle="Son analiz bağlamı görüntüleniyor. En son analiz edilen artifact için Neo4j tabanlı node-edge görünümü."
+            title="Canlı graph özeti"
+            subtitle="Analiz sonrası bilgi grafiği bağlamı burada daha okunabilir bir operasyon özeti olarak görünür."
           >
             <LiveGraphPanel
               compact
               viewMode="summary"
               graph={graphData}
+              compactSummary={compactGraphSummary}
               loading={graphLoading}
               error={graphError}
-              emptyTitle="Henüz graph bağlamı oluşturulmadı"
-              emptyDescription="Bir artifact analizi başlatarak ilişkisel görünümü oluşturun."
+              emptyTitle="Henüz analiz başlatılmadı"
+              emptyDescription="Bir artifact analizi başlattığınızda canlı graph görünümü burada oluşur. Bu alan saldırı, tactic, savunma ve etki yayılımı ilişkilerini özetler."
+              emptyTags={graphEmptyTags}
             />
             {!description.trim() ? (
               <p className="helper-note helper-note-warning graph-preview-note">
-                Açıklama olmadan analiz yapılabilir; bağlam eksik olduğunda eşleşme doğruluğu düşebilir.
+                Açıklama zorunlu değildir; ancak bağlam eklediğinizde eşleşme ve ML sıralaması daha tutarlı hale gelebilir.
               </p>
             ) : null}
           </SurfaceCard>
 
-          <SurfaceCard title="Workspace odakları">
+          <SurfaceCard title="Bu panel ne gösterir?">
             <ul className="metric-list">
-              <li>Artifact merkezli odak görünümü</li>
-              <li>Node etiketleri ve ilişki isimleri</li>
-              <li>Tür bazlı renk ayrımı</li>
-              <li>Match, tactic ve savunma akışı</li>
-              <li>Graph sayfasıyla paylaşılan son bağlam</li>
+              <li>Girdi artifact'i ve eşleşen varlığı</li>
+              <li>Doğrudan saldırılar ile tactic akışını</li>
+              <li>Savunma odağını ve güven bağlamını</li>
+              <li>Varsa etki yayılımı sinyallerini</li>
+              <li>Graph sayfasıyla paylaşılan son bağlamı</li>
             </ul>
           </SurfaceCard>
         </aside>

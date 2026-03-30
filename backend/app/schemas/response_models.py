@@ -22,8 +22,13 @@ class DefenseSuggestion(BaseModel):
 class Diagnostics(BaseModel):
     """Execution trace that helps debugging and observability."""
 
+    original_artifact: str = ""
+    original_description: str = ""
     normalized_artifact: str
     normalized_description: str
+    multilingual_keywords: list[str] = Field(default_factory=list)
+    turkish_synonym_expansion_used: bool = False
+    english_synonym_expansion_used: bool = False
     thresholds: dict[str, float] = Field(default_factory=dict)
     warnings: list[str] = Field(default_factory=list)
     processing_steps: list[str] = Field(default_factory=list)
@@ -69,6 +74,13 @@ class ArtifactOption(BaseModel):
     category: str
 
 
+class ExplanationSection(BaseModel):
+    """Short natural-language explanation section."""
+
+    label: str
+    text: str
+
+
 class AnalyzeResponse(BaseModel):
     """Unified response model for the /analyze endpoint."""
 
@@ -79,9 +91,24 @@ class AnalyzeResponse(BaseModel):
     confidence_score: float
     confidence_label: str
     direct_attacks: list[str] = Field(default_factory=list)
+    may_impact_artifacts: list[str] = Field(default_factory=list)
+    may_impact_attacks: list[str] = Field(default_factory=list)
     direct_tactics: list[str] = Field(default_factory=list)
     next_tactics: list[str] = Field(default_factory=list)
     predicted_attacks_top5: list[AttackPrediction] = Field(default_factory=list)
     defense_suggestions: list[DefenseSuggestion] = Field(default_factory=list)
     low_confidence_reason: str | None = None
+    extracted_artifacts: list[str] = Field(default_factory=list)
+    extracted_attacks: list[str] = Field(default_factory=list)
+    keywords: list[str] = Field(default_factory=list)
+    intent: str | None = None
+    matched_attack: str | None = None
+    matched_attack_exact: bool = False
+    fallback_attack_family: str | None = None
+    fallback_attack_explanation: str | None = None
+    analysis_route: str | None = None
+    attack_match_method: str | None = None
+    explanation_title: str | None = None
+    explanation_text: str | None = None
+    explanation_sections: list[ExplanationSection] = Field(default_factory=list)
     diagnostics: Diagnostics
