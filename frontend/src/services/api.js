@@ -120,6 +120,10 @@ export async function analyzeArtifact(payload) {
   return postJson("/analyze", payload);
 }
 
+export async function analyzeScenario(payload) {
+  return postJson("/analyze-scenario", payload);
+}
+
 export async function fetchGraphContext(payload) {
   return postJson("/graph/context", payload);
 }

@@ -22,6 +22,10 @@
   --border-light-strong: rgba(22, 44, 70, 0.16);
   --shadow-section: 0 18px 55px rgba(5, 12, 22, 0.2);
   --shadow-card: 0 16px 38px rgba(4, 10, 18, 0.22);
+  --shadow-card-hover: 0 24px 48px rgba(4, 10, 18, 0.28);
+  --radius-panel: 30px;
+  --radius-card: 24px;
+  --radius-card-inner: 18px;
   --hero-gradient:
     radial-gradient(circle at 16% 18%, rgba(80, 145, 230, 0.24), transparent 24%),
     radial-gradient(circle at 82% 12%, rgba(55, 110, 182, 0.18), transparent 22%),
@@ -386,22 +390,22 @@ textarea {
 }
 
 .content-section {
-  padding: 20px 0;
+  padding: 26px 0;
 }
 
 .page-intro {
-  margin-top: 22px;
-  margin-bottom: 20px;
+  margin-top: 26px;
+  margin-bottom: 24px;
 }
 
 .content-section-inner {
-  margin-top: 20px;
+  margin-top: 24px;
 }
 
 .section-panel {
   position: relative;
-  padding: 28px;
-  border-radius: 30px;
+  padding: 32px;
+  border-radius: var(--radius-panel);
   border: 1px solid transparent;
   box-shadow: var(--shadow-section);
 }
@@ -461,7 +465,7 @@ textarea {
 }
 
 .section-header {
-  margin-bottom: 24px;
+  margin-bottom: 28px;
 }
 
 .section-header-center {
@@ -494,8 +498,9 @@ textarea {
 
 .section-description {
   max-width: 780px;
-  margin: 12px 0 0;
-  font-size: 1rem;
+  margin: 14px 0 0;
+  font-size: 1.02rem;
+  line-height: 1.72;
 }
 
 .section-panel-dark .section-description,
@@ -512,12 +517,19 @@ textarea {
 }
 
 .surface-card {
-  border-radius: 24px;
-  padding: 24px;
+  border-radius: var(--radius-card);
+  padding: 26px;
   border: 1px solid var(--border-dark);
   background: var(--surface-card);
   box-shadow: var(--shadow-card);
   color: var(--text-primary);
+  transition: transform 0.22s ease, border-color 0.22s ease, box-shadow 0.22s ease,
+    background-color 0.22s ease;
+}
+
+.surface-card:hover {
+  border-color: rgba(154, 188, 225, 0.22);
+  box-shadow: var(--shadow-card-hover);
 }
 
 .section-panel-light .surface-card {
@@ -533,12 +545,13 @@ textarea {
 }
 
 .surface-card-header {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .surface-card-header h3 {
   margin: 0;
-  font-size: 1.18rem;
+  font-size: 1.2rem;
+  line-height: 1.25;
 }
 
 .section-panel-dark .surface-card-header h3,
@@ -552,7 +565,8 @@ textarea {
 
 .surface-card-header p,
 .surface-card p {
-  margin: 8px 0 0;
+  margin: 10px 0 0;
+  line-height: 1.68;
 }
 
 .section-panel-dark .surface-card p,
@@ -572,7 +586,7 @@ textarea {
 
 .card-grid {
   display: grid;
-  gap: 18px;
+  gap: 20px;
 }
 
 .card-grid-2 {
@@ -594,7 +608,7 @@ textarea {
 
 .graph-page-grid {
   grid-template-columns: minmax(300px, 0.78fr) minmax(0, 1.42fr);
-  align-items: start;
+  align-items: stretch;
 }
 
 .timeline-grid {
@@ -662,18 +676,18 @@ textarea {
 .analysis-workspace {
   display: grid;
   grid-template-columns: minmax(0, 1.42fr) minmax(310px, 0.58fr);
-  gap: 18px;
+  gap: 20px;
 }
 
 .analysis-workspace-shell {
-  margin-top: 6px;
-  padding: 24px;
+  margin-top: 10px;
+  padding: 26px;
 }
 
 .analysis-main-column,
 .analysis-side-column {
   display: grid;
-  gap: 16px;
+  gap: 18px;
   align-content: start;
 }
 
@@ -702,7 +716,7 @@ textarea {
 
 .analysis-graph-panel-emphasis {
   border-color: rgba(121, 182, 255, 0.24) !important;
-  box-shadow: 0 24px 46px rgba(7, 18, 31, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  box-shadow: 0 28px 52px rgba(7, 18, 31, 0.34), inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
 .analysis-graph-panel .surface-card-header p {
@@ -726,14 +740,17 @@ textarea {
   display: grid;
   gap: 8px;
   text-align: left;
-  padding: 18px;
-  border-radius: 18px;
+  padding: 20px;
+  border-radius: var(--radius-card-inner);
   cursor: pointer;
+  transition: transform 0.18s ease, border-color 0.18s ease, background-color 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 .mode-button span {
   color: var(--text-secondary);
-  font-size: 0.92rem;
+  font-size: 0.93rem;
+  line-height: 1.55;
 }
 
 .mode-button-active,
@@ -745,7 +762,7 @@ textarea {
 .analysis-form-advanced,
 .graph-query-form {
   display: grid;
-  gap: 16px;
+  gap: 18px;
 }
 
 .artifact-picker-shell {
@@ -809,23 +826,31 @@ textarea {
 
 .field {
   display: grid;
-  gap: 8px;
+  gap: 10px;
 }
 
 .field span {
   font-weight: 600;
   color: var(--text-primary);
+  font-size: 0.92rem;
+  letter-spacing: 0.01em;
 }
 
 .field input,
 .field textarea {
   width: 100%;
-  padding: 14px 16px;
-  border-radius: 16px;
+  min-height: 54px;
+  padding: 15px 17px;
+  border-radius: 18px;
   border: 1px solid rgba(154, 188, 225, 0.14);
-  background: rgba(255, 255, 255, 0.04);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.03));
   color: var(--text-primary);
   resize: vertical;
+  transition: border-color 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+}
+
+.field textarea {
+  min-height: 132px;
 }
 
 .field input::placeholder,
@@ -833,10 +858,16 @@ textarea {
   color: var(--text-muted);
 }
 
+.field input:hover,
+.field textarea:hover {
+  border-color: rgba(154, 188, 225, 0.22);
+}
+
 .field-help {
-  margin: -2px 0 2px;
+  margin: 0;
   color: var(--text-secondary);
-  font-size: 0.9rem;
+  font-size: 0.91rem;
+  line-height: 1.6;
 }
 
 .helper-note,
@@ -857,6 +888,107 @@ textarea {
   margin-top: 12px;
 }
 
+.technical-details {
+  margin-top: 18px;
+  border-radius: 22px;
+  border: 1px solid rgba(154, 188, 225, 0.16);
+  background: rgba(255, 255, 255, 0.03);
+  overflow: hidden;
+}
+
+.technical-details summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 20px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.technical-details summary::-webkit-details-marker {
+  display: none;
+}
+
+.technical-details summary strong {
+  display: block;
+  color: var(--text-primary);
+}
+
+.technical-details summary p {
+  margin: 6px 0 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+}
+
+.technical-details-toggle {
+  color: var(--accent);
+  font-size: 0.82rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.technical-details-body {
+  display: grid;
+  gap: 16px;
+  padding: 0 20px 20px;
+}
+
+.technical-details-group {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(154, 188, 225, 0.12);
+  background: rgba(8, 18, 30, 0.26);
+}
+
+.technical-details-group h4 {
+  margin: 0;
+  color: var(--text-primary);
+  font-size: 0.96rem;
+}
+
+.technical-details-list {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text-secondary);
+}
+
+.technical-details-list-ordered {
+  padding-left: 22px;
+}
+
+.technical-pair-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.technical-pair-card {
+  display: grid;
+  gap: 6px;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(154, 188, 225, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.technical-pair-card span {
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.technical-pair-card strong {
+  color: var(--text-primary);
+  line-height: 1.5;
+}
+
 .notice-box {
   margin-top: 12px;
   padding: 14px 16px;
@@ -864,6 +996,29 @@ textarea {
   border: 1px solid rgba(121, 182, 255, 0.24);
   background: rgba(27, 59, 95, 0.34);
   color: #dbe9fb;
+}
+
+.scenario-fallback-notice {
+  display: grid;
+  gap: 8px;
+  margin-bottom: 20px;
+  border-color: rgba(240, 200, 122, 0.32);
+  background: rgba(94, 66, 18, 0.22);
+  color: #f8e7b7;
+}
+
+.scenario-fallback-notice strong {
+  color: #fff0c4;
+}
+
+.scenario-fallback-notice p {
+  margin: 0;
+  color: #f5e4b0;
+}
+
+.scenario-fallback-notice span {
+  color: #f0d98d;
+  font-size: 0.92rem;
 }
 
 .modal-overlay {
@@ -1022,8 +1177,8 @@ textarea {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px 18px;
-  border-radius: 18px;
+  padding: 18px 20px;
+  border-radius: 20px;
   border: 1px solid rgba(154, 188, 225, 0.14);
   background: rgba(255, 255, 255, 0.04);
 }
@@ -1034,8 +1189,9 @@ textarea {
 }
 
 .analysis-status-card p {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   color: var(--text-secondary);
+  line-height: 1.6;
 }
 
 .analysis-live-indicator {
@@ -1150,7 +1306,7 @@ textarea {
 
 .result-grid {
   display: grid;
-  gap: 18px;
+  gap: 20px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   opacity: 0.72;
   transform: translateY(8px);
@@ -1168,7 +1324,7 @@ textarea {
 
 .result-skeleton-grid {
   display: grid;
-  gap: 18px;
+  gap: 20px;
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -1202,8 +1358,12 @@ textarea {
 }
 
 .result-metric-card {
-  padding: 18px;
-  border-radius: 20px;
+  display: grid;
+  align-content: start;
+  gap: 6px;
+  min-height: 100%;
+  padding: 20px;
+  border-radius: 22px;
   border: 1px solid rgba(154, 188, 225, 0.14);
   background: rgba(255, 255, 255, 0.03);
   transition: transform 0.24s ease, border-color 0.24s ease, background-color 0.24s ease,
@@ -1269,9 +1429,51 @@ textarea {
   color: #ff9e9e;
 }
 
+.analysis-explanation-card {
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.analysis-explanation-card .metric-value {
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.analysis-explanation-sections {
+  display: grid;
+  gap: 12px;
+}
+
+.analysis-explanation-section {
+  padding: 14px 16px;
+  border-radius: 16px;
+  border: 1px solid rgba(121, 182, 255, 0.16);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.analysis-explanation-section strong {
+  display: block;
+  color: var(--text-primary);
+}
+
+.analysis-explanation-section p {
+  margin: 8px 0 0;
+  color: var(--text-secondary);
+}
+
+.scenario-suggestion-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.scenario-suggestion-chip {
+  text-align: left;
+}
+
 .metric-label {
   display: inline-block;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   color: var(--accent);
   font-size: 0.82rem;
   text-transform: uppercase;
@@ -1281,17 +1483,18 @@ textarea {
 .metric-value {
   margin: 0;
   color: var(--text-primary);
-  font-size: 1.02rem;
+  font-size: 1.04rem;
   font-weight: 700;
-  line-height: 1.35;
+  line-height: 1.5;
 }
 
 .metric-list {
   display: grid;
-  gap: 10px;
-  margin: 0;
-  padding-left: 18px;
+  gap: 12px;
+  margin: 2px 0 0;
+  padding-left: 20px;
   color: var(--text-primary);
+  line-height: 1.58;
 }
 
 .metric-list li::marker {
@@ -1316,13 +1519,14 @@ textarea {
 }
 
 .metric-structured-item p {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
   color: var(--text-secondary);
+  line-height: 1.55;
 }
 
 .metric-item-meta {
   display: inline-block;
-  margin-top: 4px;
+  margin-top: 6px;
   color: var(--accent);
   font-size: 0.82rem;
 }
@@ -1338,7 +1542,7 @@ textarea {
 
 .graph-live-shell {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   min-height: 0;
 }
 
@@ -1468,15 +1672,19 @@ textarea {
 
 .graph-preview-card {
   display: grid;
-  gap: 14px;
+  gap: 16px;
   min-height: 320px;
-  padding: 18px;
-  border-radius: 22px;
+  padding: 20px;
+  border-radius: 24px;
   border: 1px solid rgba(154, 188, 225, 0.16);
   background:
     radial-gradient(circle at top right, rgba(121, 182, 255, 0.14), transparent 28%),
     linear-gradient(180deg, rgba(12, 24, 39, 0.96), rgba(8, 18, 31, 0.98));
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 18px 46px rgba(3, 8, 16, 0.26);
+}
+
+.graph-preview-card-summary {
+  min-height: 0;
 }
 
 .graph-preview-head strong {
@@ -1485,21 +1693,22 @@ textarea {
 }
 
 .graph-preview-head p {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   color: var(--text-secondary);
   font-size: 0.92rem;
+  line-height: 1.58;
 }
 
 .graph-preview-flow {
   display: grid;
-  gap: 12px;
+  gap: 14px;
 }
 
 .graph-preview-step {
   position: relative;
   display: grid;
-  gap: 6px;
-  padding: 14px 16px;
+  gap: 8px;
+  padding: 16px 18px;
   border-radius: 18px;
   border: 1px solid rgba(154, 188, 225, 0.14);
   background: rgba(255, 255, 255, 0.04);
@@ -1516,7 +1725,7 @@ textarea {
 .graph-preview-step strong {
   color: var(--text-primary);
   font-size: 0.98rem;
-  line-height: 1.3;
+  line-height: 1.45;
 }
 
 .graph-preview-step-artifact {
@@ -1535,11 +1744,87 @@ textarea {
   border-color: rgba(89, 215, 165, 0.24);
 }
 
+.graph-summary-grid {
+  display: grid;
+  gap: 12px;
+}
+
+.graph-summary-block {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid rgba(154, 188, 225, 0.14);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.graph-summary-block span {
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+}
+
+.graph-summary-block strong {
+  color: var(--text-primary);
+  font-size: 0.96rem;
+  line-height: 1.55;
+}
+
+.graph-empty-state {
+  display: grid;
+  gap: 18px;
+  min-height: 320px;
+  align-content: center;
+  padding: 28px 24px;
+  border-radius: 24px;
+  border: 1px solid rgba(154, 188, 225, 0.16);
+  background:
+    radial-gradient(circle at top right, rgba(121, 182, 255, 0.12), transparent 28%),
+    linear-gradient(180deg, rgba(12, 24, 39, 0.96), rgba(8, 18, 31, 0.98));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04), 0 18px 46px rgba(3, 8, 16, 0.26);
+}
+
+.graph-empty-state-copy {
+  display: grid;
+  gap: 8px;
+}
+
+.graph-empty-state-copy strong {
+  color: var(--text-primary);
+  font-size: 1.14rem;
+}
+
+.graph-empty-state-copy p {
+  margin: 0;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+.graph-empty-state-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.graph-empty-state-tags span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  background: rgba(121, 182, 255, 0.1);
+  border: 1px solid rgba(121, 182, 255, 0.16);
+  color: var(--text-primary);
+  font-size: 0.84rem;
+}
+
 .graph-live-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 14px;
+  gap: 18px;
 }
 
 .graph-live-header strong {
@@ -1548,14 +1833,15 @@ textarea {
 }
 
 .graph-live-header p {
-  margin: 4px 0 0;
+  margin: 6px 0 0;
   color: var(--text-secondary);
+  line-height: 1.6;
 }
 
 .graph-legend {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 12px;
 }
 
 .graph-legend-item {
@@ -1592,7 +1878,7 @@ textarea {
   display: flex;
   flex-direction: column;
   min-height: 620px;
-  border-radius: 22px;
+  border-radius: 24px;
   overflow: hidden;
   border: 1px solid rgba(154, 188, 225, 0.16);
   background:
@@ -1702,8 +1988,8 @@ textarea {
   display: grid;
   gap: 10px;
   margin-top: 18px;
-  padding: 14px 16px;
-  border-radius: 18px;
+  padding: 16px 18px;
+  border-radius: 20px;
   border: 1px solid rgba(154, 188, 225, 0.12);
   background: rgba(255, 255, 255, 0.03);
 }
@@ -1922,6 +2208,7 @@ textarea {
 
 .scenario-card .surface-card-header p {
   font-size: 0.95rem;
+  line-height: 1.6;
 }
 
 .scenario-meta span {
@@ -1933,13 +2220,14 @@ textarea {
 }
 
 .scenario-meta p {
-  margin: 6px 0 0;
+  margin: 8px 0 0;
+  line-height: 1.6;
 }
 
 .scenario-card-cta {
   width: 100%;
   margin-top: 20px;
-  box-shadow: 0 12px 28px rgba(7, 17, 29, 0.2);
+  box-shadow: 0 14px 30px rgba(7, 17, 29, 0.2);
 }
 
 .scenario-card-cta:hover {
@@ -1947,6 +2235,9 @@ textarea {
 }
 
 .scenario-card {
+  display: grid;
+  align-content: start;
+  gap: 4px;
   transition: transform 0.24s ease, border-color 0.24s ease, box-shadow 0.24s ease;
 }
 
@@ -1966,7 +2257,7 @@ textarea {
 .footer-grid {
   display: grid;
   grid-template-columns: 1.2fr 0.7fr 1fr;
-  gap: 18px;
+  gap: 22px;
 }
 
 .site-footer strong {
@@ -2203,12 +2494,13 @@ textarea {
   .mode-toggle,
   .artifact-modal-list,
   .result-grid,
-  .result-skeleton-grid {
+  .result-skeleton-grid,
+  .technical-pair-grid {
     grid-template-columns: 1fr;
   }
 
   .section-panel {
-    padding: 22px;
+    padding: 24px;
     border-radius: 24px;
   }
 

@@ -15,6 +15,10 @@ export function getNodeRole(node, graph) {
     return "artifact-matched";
   }
 
+  if (node.id.startsWith("artifact:impacted:")) {
+    return "artifact-impacted";
+  }
+
   if (node.type === "attack") {
     return "attack";
   }
@@ -41,6 +45,9 @@ export function typeLabel(type, role) {
   if (role === "artifact-matched") {
     return "Matched";
   }
+  if (role === "artifact-impacted") {
+    return "Impacted";
+  }
   if (type === "attack") {
     return "Attack";
   }
@@ -60,6 +67,7 @@ export function buildPreviewSections(graph) {
   const groups = {
     "artifact-input": [],
     "artifact-matched": [],
+    "artifact-impacted": [],
     attack: [],
     "tactic-direct": [],
     "tactic-next": [],
@@ -74,9 +82,10 @@ export function buildPreviewSections(graph) {
   });
 
   return [
-    { label: "GiriÅŸ artifact", items: groups["artifact-input"], type: "artifact" },
-    { label: "EÅŸleÅŸen artifact", items: groups["artifact-matched"], type: "artifact" },
-    { label: "Ã–ncelikli attack", items: unique(groups.attack), type: "attack" },
+    { label: "Girdi artifact", items: groups["artifact-input"], type: "artifact" },
+    { label: "Eşleşen artifact", items: groups["artifact-matched"], type: "artifact" },
+    { label: "Etkilenen varlık", items: groups["artifact-impacted"], type: "artifact" },
+    { label: "Öncelikli saldırı", items: unique(groups.attack), type: "attack" },
     { label: "Direct tactic", items: unique(groups["tactic-direct"]), type: "tactic" },
     { label: "Next tactic", items: unique(groups["tactic-next"]), type: "tactic" },
     { label: "Savunma", items: unique(groups.defense), type: "defense" }

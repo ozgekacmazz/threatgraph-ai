@@ -11,19 +11,19 @@ const graphSections = [
   },
   {
     title: "Attack ilişkileri",
-    text: "Neo4j reasoning sonucu ortaya çıkan doğrudan saldırılar `DIRECT_ATTACK` ilişkileriyle okunabilir biçimde açılır."
+    text: "Neo4j reasoning sonucu ortaya çıkan doğrudan saldırılar ve varsa yayılım kaynaklı saldırılar graph üzerinde okunabilir biçimde açılır."
   },
   {
     title: "Tactic akışı",
     text: "Doğrudan tactic ilişkileri `HAS_TACTIC`, sonraki genişleme hattı ise `NEXT_TACTIC` kenarlarıyla ayrıştırılır."
   },
   {
-    title: "Next tactic genişlemesi",
-    text: "Bir artifact'ten sonra hangi tactic yollarının dallandığı canlı graph üzerinden izlenebilir."
-  },
-  {
     title: "Savunma ilişkileri",
     text: "Defense düğümleri mevcut olduğunda `DEFENDED_BY` ilişkileriyle aynı görünümde karar desteğine eklenir."
+  },
+  {
+    title: "Etki yayılımı",
+    text: "Bağlı varlıklara doğru genişleyen risk hattı, zincirleme etkileri ve ek saldırı yüzeyini aynı keşif akışında görünür kılar."
   }
 ];
 
@@ -87,7 +87,7 @@ function GraphPage() {
         <SectionHeader
           eyebrow="ThreatGraph AI Graph"
           title="Canlı node-edge görünümü ile saldırı ilişkilerini keşfedin"
-          description="Bu alan statik bir mock değil, backend'den gelen graph-ready veriyi işler. Varsayılan özet görünüm ilk bakışta karar vermeyi kolaylaştırır; isterseniz tam graph bağlamına geçebilirsiniz."
+          description="Bu alan statik bir mock değil, backend'den gelen graph-ready veriyi işler. Varsayılan özet görünüm; attack ilişkileri, tactic akışı, savunma bağlantıları ve etki yayılımını ilk bakışta takip etmeyi kolaylaştırır."
         />
       </section>
 
@@ -98,8 +98,9 @@ function GraphPage() {
           subtitle="Son analiz edilen artifact'i inceleyin veya yeni bir odak sorgusu başlatın."
         >
           <p>
-            Graph endpoint'i; artifact, matched artifact, direct attack, tactic, next tactic ve
-            defense düğümlerini normalize edilmiş ilişkilerle frontend'e taşır.
+            Graph endpoint'i; artifact, eşleşen artifact, attack ilişkileri, tactic akışı,
+            savunma bağlantıları, etki yayılımı ve yayılım kaynaklı saldırı sinyallerini
+            normalize edilmiş ilişki yapısıyla frontend'e taşır.
           </p>
 
           <div className="query-helper-strip">
