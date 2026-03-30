@@ -36,6 +36,11 @@ const flowSteps = [
     text: "Neo4j üzerinde doğrudan ve zincirsel ilişkiler açılır."
   },
   {
+    key: "ETKİ YAYILIMI",
+    title: "Zincirleme risk görünümü",
+    text: "Bir artifact’in etkileyebileceği bağlı varlıklar ve bu yayılımdan doğabilecek ek saldırı yüzeyi görünür hale gelir."
+  },
+  {
     key: "ML RANKING",
     title: "Top-5 saldırı tahmini",
     text: "Model, en kritik saldırı adaylarını olasılıkla sıralar."
@@ -50,7 +55,8 @@ const flowSteps = [
 const pipelineSteps = [
   "Input artifact ve açıklama alınır, metin normalize edilir.",
   "Hybrid mapping katmanı artifact'i yeni veya mevcut örnek olarak konumlandırır.",
-  "Neo4j reasoning ile direct attack, direct tactic ve next tactic ilişkileri açılır.",
+  "Neo4j reasoning ile saldırı ilişkileri, tactic akışı ve savunma bağlantıları görünür hale gelir.",
+  "Etki yayılımı katmanı bağlı varlıklara sıçrayabilecek zincirleme riski ve ek saldırı yüzeyini açığa çıkarır.",
   "ML ranking katmanı Top-5 saldırı tahminini olasılıksal sırayla üretir.",
   "Defense recommendation motoru savunma aksiyonlarını ilişkiye dayalı olarak hazırlar.",
   "Confidence katmanı düşük güvenli çıktılarda dürüst abstention davranışını devreye alır."
@@ -95,7 +101,7 @@ function HomePage() {
         <div className="container hero-grid">
           <div className="hero-copy-block">
             <p className="section-eyebrow">ThreatGraph AI</p>
-            <h1>Siber saldırıları veri grafiği üzerinden anlayın, tahmin edin ve yönetin</h1>
+            <h1>Siber saldırıları bilgi grafiği üzerinden anlayın, tahmin edin ve yönetin</h1>
             <p className="hero-description">
               Knowledge graph ve makine öğrenmesi ile saldırı davranışını çözümleyen karar
               destek sistemi. ThreatGraph AI, yeni gelen artifact&apos;leri ve graf içinde zaten
@@ -104,9 +110,6 @@ function HomePage() {
             <div className="hero-actions">
               <Link className="button button-primary" to="/analiz">
                 Analizi Dene
-              </Link>
-              <Link className="button button-secondary" to="/mimari">
-                Sistemi İncele
               </Link>
             </div>
             <div className="hero-highlights">
@@ -148,7 +151,7 @@ function HomePage() {
           <SectionHeader
             eyebrow="Sistem ne yapar?"
             title="ThreatGraph AI artifact merkezli saldırı yorumlamasını tek üründe toplar"
-            description="Backend analiz zinciri zaten çalışırken arayüz; eşleşme, attack zinciri, tactic akışı, savunma önerisi ve confidence çıktısını kurumsal kullanıma uygun bir karar deneyimine dönüştürür."
+            description="Backend analiz zinciri zaten çalışırken arayüz; attack ilişkileri, tactic akışı, savunma önerileri, etki yayılımı ve confidence çıktısını kurumsal kullanıma uygun bir karar deneyimine dönüştürür."
           />
           <div className="card-grid card-grid-3">
             {capabilityCards.map((item) => (
@@ -183,7 +186,7 @@ function HomePage() {
             >
               <p>
                 Bilinen artifact doğrudan graph reasoning katmanına bağlanır; direct attack,
-                direct tactic, next tactic ve defense ilişkileri daha hızlı ve daha net şekilde açılır.
+                tactic akışı, savunma ilişkileri ve etki yayılımı daha hızlı ve daha net şekilde açılır.
               </p>
             </SurfaceCard>
           </div>
@@ -274,9 +277,9 @@ function HomePage() {
               description="Graf sayfası ve analiz ekranı, canlı Neo4j görselleştirmesi büyüdüğünde büyük refactor gerektirmeyecek şekilde aynı ürün tasarım sisteminde hazırlanmıştır."
             />
             <p className="support-copy">
-              Artifact düğümleri, attack ilişkileri, tactic geçişleri, next tactic akışı ve
-              savunma bağlantıları için ayrı görsel katmanlar hazır. Bir sonraki adımda bu alan
-              doğrudan backend graph verisiyle genişletilebilir.
+              Artifact düğümleri, attack ilişkileri, tactic akışı, savunma bağlantıları ve etki
+              yayılımı için ayrı görsel katmanlar hazır. Bu alan, karar verirken ilişki zincirini
+              doğal ve okunabilir biçimde izlemeyi kolaylaştırır.
             </p>
             <Link className="button button-secondary" to="/graf">
               Graph Alanını Aç
@@ -286,25 +289,6 @@ function HomePage() {
             title="ThreatGraph AI"
             description="Canlı düğüm-ilişki görünümü, odak geçişleri ve ilişki filtreleri için ayrılmış ürün alanı."
           />
-        </div>
-      </section>
-
-      <section className="content-section subtle-section">
-        <div className="container section-panel section-panel-light">
-          <SectionHeader
-            eyebrow="Teknik mimari"
-            title="Frontend'den ML sıralamasına uzanan net sistem katmanları"
-            description="Mimari sayfası; frontend, FastAPI, mapping service, Neo4j reasoning, ML ranking, defense recommendation ve confidence katmanlarını ürün akışı içinde açıklar."
-          />
-          <div className="architecture-strip">
-            <span>Frontend</span>
-            <span>FastAPI</span>
-            <span>Mapping Service</span>
-            <span>Neo4j Reasoning</span>
-            <span>ML Ranking</span>
-            <span>Defense</span>
-            <span>Confidence</span>
-          </div>
         </div>
       </section>
 

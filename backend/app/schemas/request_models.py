@@ -34,3 +34,9 @@ class GraphContextRequest(BaseModel):
         default="new",
         description="Whether graph focus comes from a new artifact flow or an existing artifact flow.",
     )
+
+
+class ScenarioAnalyzeRequest(BaseModel):
+    """Incoming request for free-text scenario analysis."""
+
+    text: str = Field(..., min_length=1, description="Free-text security scenario to analyze.")

@@ -1,6 +1,13 @@
 import { NavLink, Outlet } from "react-router-dom";
 
-const navigation = [
+const headerNavigation = [
+  { to: "/", label: "Ana Sayfa", end: true },
+  { to: "/analiz", label: "Analiz" },
+  { to: "/graf", label: "Graf" },
+  { to: "/senaryolar", label: "Senaryolar" }
+];
+
+const footerNavigation = [
   { to: "/", label: "Ana Sayfa", end: true },
   { to: "/analiz", label: "Analiz" },
   { to: "/mimari", label: "Mimari" },
@@ -23,7 +30,7 @@ function AppLayout() {
           </NavLink>
 
           <nav className="main-nav" aria-label="Ana navigasyon">
-            {navigation.map((item) => (
+            {headerNavigation.map((item) => (
               <NavLink
                 key={item.to}
                 className={({ isActive }) => `nav-link${isActive ? " nav-link-active" : ""}`}
@@ -58,7 +65,7 @@ function AppLayout() {
           <div>
             <span className="footer-label">Sayfalar</span>
             <div className="footer-links">
-              {navigation.map((item) => (
+              {footerNavigation.map((item) => (
                 <NavLink key={item.to} to={item.to} end={item.end}>
                   {item.label}
                 </NavLink>

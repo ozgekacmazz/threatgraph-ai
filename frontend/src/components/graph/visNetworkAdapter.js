@@ -1,4 +1,12 @@
-const EDGE_LABELS = ["MATCHED_TO", "DIRECT_ATTACK", "HAS_TACTIC", "NEXT_TACTIC", "DEFENDED_BY"];
+const EDGE_LABELS = [
+  "MATCHED_TO",
+  "DIRECT_ATTACK",
+  "HAS_TACTIC",
+  "NEXT_TACTIC",
+  "DEFENDED_BY",
+  "MAY_IMPACT",
+  "PROPAGATED_ATTACK"
+];
 
 function unique(values) {
   return [...new Set(values)];
@@ -23,6 +31,10 @@ export function getNodeRole(node, graph) {
 
   if (matchedArtifactId && node.id === matchedArtifactId) {
     return "artifact-matched";
+  }
+
+  if (node.id.startsWith("artifact:impacted:")) {
+    return "artifact-impacted";
   }
 
   if (node.type === "attack") {
@@ -135,13 +147,22 @@ export function buildBranchIndex(graph) {
   const { nodesById, edges, outgoing } = createGraphMaps(graph);
   const { inputId, matchedId, anchorId } = findAnchorIds(graph);
   const attackIds = sortNodeIds(getTargets(outgoing, anchorId, "DIRECT_ATTACK"), nodesById);
+  const impactedArtifactIds = sortNodeIds(getTargets(outgoing, anchorId, "MAY_IMPACT"), nodesById);
   const directTacticsByAttack = new Map();
   const nextTacticsByDirect = new Map();
   const defensesBySource = new Map();
+  const propagatedAttacksByArtifact = new Map();
   const branchStatsByAttack = new Map();
 
   attackIds.forEach((attackId) => {
     directTacticsByAttack.set(attackId, sortNodeIds(getTargets(outgoing, attackId, "HAS_TACTIC"), nodesById));
+  });
+
+  impactedArtifactIds.forEach((artifactId) => {
+    propagatedAttacksByArtifact.set(
+      artifactId,
+      sortNodeIds(getTargets(outgoing, artifactId, "PROPAGATED_ATTACK"), nodesById)
+    );
   });
 
   nodesById.forEach((node, nodeId) => {
@@ -182,9 +203,11 @@ export function buildBranchIndex(graph) {
     edges,
     outgoing,
     attackIds,
+    impactedArtifactIds,
     directTacticsByAttack,
     nextTacticsByDirect,
     defensesBySource,
+    propagatedAttacksByArtifact,
     branchStatsByAttack
   };
 }
@@ -295,6 +318,11 @@ export function buildSummaryGraph(graph) {
     }
   }
 
+  index.impactedArtifactIds.slice(0, 3).forEach((impactedArtifactId) => {
+    addNode(impactedArtifactId);
+    addEdge(narrative.centerArtifactId, impactedArtifactId, "MAY_IMPACT");
+  });
+
   topAttacks.forEach(({ attackId }) => {
     addNode(attackId);
     addEdge(narrative.centerArtifactId, attackId, "DIRECT_ATTACK");
@@ -372,6 +400,12 @@ function buildVisNode(node, graph, isSummary) {
       mass: 2.8,
       font: { size: 15, color: "#e4f2ff", face: "Segoe UI" }
     },
+    "artifact-impacted": {
+      color: { background: "#18324b", border: "#9dd3ff", highlight: { background: "#214260", border: "#c2e6ff" } },
+      size: isSummary ? 26 : 29,
+      mass: 2.6,
+      font: { size: 14, color: "#edf8ff", face: "Segoe UI" }
+    },
     attack: {
       color: { background: "#3a2331", border: "#ff8fc2", highlight: { background: "#522e42", border: "#ffb5d7" } },
       size: isSummary ? 26 : 30,
@@ -425,6 +459,15 @@ function buildVisNode(node, graph, isSummary) {
   };
 }
 
+function getDisplayEdgeLabel(label) {
+  const labels = {
+    MAY_IMPACT: "ETKİ YAYILIMI",
+    PROPAGATED_ATTACK: "YAYILIM SALDIRISI"
+  };
+
+  return labels[label] || label;
+}
+
 function buildVisEdge(edge, graph, isSummary) {
   const edgeStyles = {
     MATCHED_TO: {
@@ -447,6 +490,16 @@ function buildVisEdge(edge, graph, isSummary) {
     DEFENDED_BY: {
       color: { color: "rgba(247, 212, 123, 0.72)", highlight: "#ffe7ac" },
       width: 2.2
+    },
+    MAY_IMPACT: {
+      color: { color: "rgba(138, 208, 255, 0.8)", highlight: "#d1eeff" },
+      dashes: [8, 6],
+      width: 2.4
+    },
+    PROPAGATED_ATTACK: {
+      color: { color: "rgba(255, 196, 122, 0.82)", highlight: "#ffe0ad" },
+      dashes: [5, 5],
+      width: 2.3
     }
   };
 
@@ -460,10 +513,10 @@ function buildVisEdge(edge, graph, isSummary) {
     arrows: {
       to: {
         enabled: true,
-        scaleFactor: edge.label === "DIRECT_ATTACK" ? 0.8 : 0.7
+        scaleFactor: edge.label === "DIRECT_ATTACK" || edge.label === "PROPAGATED_ATTACK" ? 0.8 : 0.7
       }
     },
-    label: showLabel ? edge.label : "",
+    label: showLabel ? getDisplayEdgeLabel(edge.label) : "",
     font: {
       color: "#d7e9f8",
       size: isSummary ? 10 : 12,
