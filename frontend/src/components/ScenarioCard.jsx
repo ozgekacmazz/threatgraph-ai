@@ -1,52 +1,29 @@
 import { Link } from "react-router-dom";
 import SurfaceCard from "./SurfaceCard";
 
+function clampPreview(value, maxLength = 150) {
+  const normalizedValue = String(value || "").replace(/\s+/g, " ").trim();
+  if (normalizedValue.length <= maxLength) {
+    return normalizedValue;
+  }
+
+  return `${normalizedValue.slice(0, maxLength).trimEnd()}...`;
+}
+
 function ScenarioCard({
   title,
-  subtitle,
   input,
-  matchedArtifact,
-  whyItMatters,
   previewComment,
   to,
-  ctaLabel = "Bu senaryoyu aç",
-  analysisMode = "known",
+  ctaLabel = "Analizi görüntüle",
 }) {
-  const query =
-    !to && matchedArtifact
-      ? new URLSearchParams({
-          artifact_name: matchedArtifact,
-          description: input,
-          mode: analysisMode,
-        }).toString()
-      : null;
-  const targetRoute = to || (query ? `/analiz?${query}` : "/senaryolar");
+  const targetRoute = to || "/senaryolar";
 
   return (
-    <SurfaceCard className="scenario-card" title={title} subtitle={subtitle}>
-      {input ? (
-        <div className="scenario-meta">
-          <span>Senaryo</span>
-          <p>{input}</p>
-        </div>
-      ) : null}
+    <SurfaceCard className="scenario-card" title={title}>
+      {input ? <p className="scenario-card-copy">{clampPreview(input, 160)}</p> : null}
       {previewComment ? (
-        <div className="scenario-meta">
-          <span>Kısa yorum</span>
-          <p>{previewComment}</p>
-        </div>
-      ) : null}
-      {matchedArtifact ? (
-        <div className="scenario-meta">
-          <span>Eşleşen Artifact</span>
-          <p>{matchedArtifact}</p>
-        </div>
-      ) : null}
-      {whyItMatters ? (
-        <div className="scenario-meta">
-          <span>Neden Önemli?</span>
-          <p>{whyItMatters}</p>
-        </div>
+        <p className="scenario-card-preview">{clampPreview(previewComment, 140)}</p>
       ) : null}
       <Link className="button button-secondary scenario-card-cta" to={targetRoute}>
         {ctaLabel}

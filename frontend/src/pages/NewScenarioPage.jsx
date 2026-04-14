@@ -1,15 +1,13 @@
-import { useMemo, useRef, useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import SectionHeader from "../components/SectionHeader";
 import SurfaceCard from "../components/SurfaceCard";
 import { analyzeScenario } from "../services/api";
-import { mapScenarioAnalysisResult } from "../utils/scenarioAnalysis";
 import {
   buildCustomScenarioId,
   saveCustomScenarioAnalysis,
 } from "../utils/scenarioStorage";
 
-const starterScenario = "Phishing sonrası credential ele geçirilirse ne olur?";
 const scenarioSuggestions = [
   "Phishing sonrası kimlik bilgileri ele geçirilirse ne olabilir?",
   "Oturum çerezi çalınırsa saldırgan ne yapabilir?",
@@ -17,18 +15,27 @@ const scenarioSuggestions = [
   "Şüpheli DNS trafiği neyin işareti olabilir?",
 ];
 
+function buildCustomScenarioTitle(text) {
+  const normalizedText = String(text || "").replace(/\s+/g, " ").trim();
+  if (!normalizedText) {
+    return "Senaryo analizi";
+  }
+
+  const firstSentence = normalizedText.match(/.+?[.!?](?=\s|$)/)?.[0] || normalizedText;
+  const trimmedSentence = firstSentence.trim();
+
+  if (trimmedSentence.length <= 90) {
+    return trimmedSentence;
+  }
+
+  return "Senaryo analizi";
+}
+
 function NewScenarioPage() {
   const navigate = useNavigate();
-  const [scenarioText, setScenarioText] = useState(starterScenario);
+  const [scenarioText, setScenarioText] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [resultRecord, setResultRecord] = useState(null);
-  const resultRef = useRef(null);
-
-  const displayedResult = useMemo(
-    () => mapScenarioAnalysisResult(resultRecord?.result || null),
-    [resultRecord]
-  );
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -47,15 +54,15 @@ function NewScenarioPage() {
       const record = {
         id: buildCustomScenarioId(),
         type: "custom",
+        title: buildCustomScenarioTitle(trimmedScenario),
         scenarioText: trimmedScenario,
-        result: response,
+        result: response && typeof response === "object" ? response : {},
         createdAt: new Date().toISOString(),
       };
 
       saveCustomScenarioAnalysis(record);
-      setResultRecord(record);
-      window.requestAnimationFrame(() => {
-        resultRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      navigate(`/senaryolar/ozel/${record.id}`, {
+        state: { record },
       });
     } catch (requestError) {
       setError(
@@ -72,8 +79,8 @@ function NewScenarioPage() {
       <section className="container page-intro section-panel section-panel-dark">
         <SectionHeader
           eyebrow="Yeni Senaryo"
-          title="Senaryonu yaz, kısa yorumu önce gör"
-          description="Mevcut serbest metin deneyimi korunur. Türkçe veya İngilizce bir senaryo yazın; sistem önce kısa bir yorum üretir, tam yapılandırılmış analiz ise detay sayfasında açılır."
+          title="Senaryonu yaz"
+          description="Türkçe veya İngilizce bir senaryo girin. Analiz tamamlandığında önce senaryo analizi ekranına yönlendirilirsiniz; kapsamlı değerlendirme ayrı çalışma alanında açılır."
         />
       </section>
 
@@ -81,12 +88,12 @@ function NewScenarioPage() {
         <div className="analysis-workspace-shell">
           <div className="analysis-main-column">
             <SurfaceCard
-              title="Senaryonu anlat"
-              subtitle="Türkçe, İngilizce veya karışık dil kullanabilirsiniz. Sistem mevcut analiz hattını kullanarak yorumu üretir."
+              title="Senaryo metni"
+              subtitle="Doğal dilde yazılmış senaryo mevcut analiz hattına bağlanır ve önce okunabilir bir değerlendirme üretilir."
             >
               <form className="analysis-form-advanced" onSubmit={handleSubmit}>
                 <label className="field">
-                  <span>Senaryo metni</span>
+                  <span>Senaryoyu anlat</span>
                   <textarea
                     value={scenarioText}
                     onChange={(event) => setScenarioText(event.target.value)}
@@ -94,30 +101,28 @@ function NewScenarioPage() {
                   />
                 </label>
                 <p className="field-help">
-                  Örneğin kimlik bilgisi ele geçirilmesi, oturum çalınması, zararlı dosya
-                  çalıştırılması veya şüpheli ağ trafiği durumunu yazabilirsiniz.
+                  Kimlik bilgisi ele geçirilmesi, oturum devralma, zararlı dosya çalıştırılması
+                  veya şüpheli ağ davranışı gibi olayları serbest metinle yazabilirsiniz.
                 </p>
-                {!resultRecord && !loading ? (
-                  <div className="scenario-suggestion-strip">
-                    {scenarioSuggestions.map((suggestion) => (
-                      <button
-                        key={suggestion}
-                        type="button"
-                        className="button button-secondary button-small scenario-suggestion-chip"
-                        onClick={() => {
-                          setScenarioText(suggestion);
-                          setError("");
-                        }}
-                      >
-                        {suggestion}
-                      </button>
-                    ))}
-                  </div>
-                ) : null}
+                <div className="scenario-suggestion-strip">
+                  {scenarioSuggestions.map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      type="button"
+                      className="button button-secondary button-small scenario-suggestion-chip"
+                      onClick={() => {
+                        setScenarioText(suggestion);
+                        setError("");
+                      }}
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
                 {error ? <p className="helper-note helper-note-warning">{error}</p> : null}
                 <div className="hero-actions">
                   <button className="button button-primary" type="submit" disabled={loading}>
-                    {loading ? "Senaryo analiz ediliyor..." : "Senaryoyu analiz et"}
+                    {loading ? "Senaryo analizi hazırlanıyor..." : "Senaryo analizini oluştur"}
                   </button>
                   <Link className="button button-secondary" to="/senaryolar">
                     Hazır senaryolara dön
@@ -126,61 +131,7 @@ function NewScenarioPage() {
               </form>
             </SurfaceCard>
           </div>
-
-          <div className="analysis-side-column">
-            <SurfaceCard
-              title="Bu akış ne üretir?"
-              subtitle="Kısa yorum önde tutulur, detaylı çıktı ayrı rota üzerinden açılır."
-            >
-              <div className="pill-grid">
-                <span className="feature-pill">Artifact çıkarımı</span>
-                <span className="feature-pill">Saldırı ipuçları</span>
-                <span className="feature-pill">Intent tespiti</span>
-                <span className="feature-pill">Graph reasoning</span>
-                <span className="feature-pill">ML ranking</span>
-                <span className="feature-pill">Savunma önerileri</span>
-              </div>
-            </SurfaceCard>
-          </div>
         </div>
-      </section>
-
-      <section className="container section-panel section-panel-dark" ref={resultRef}>
-        <SectionHeader
-          eyebrow="Kısa Yorum"
-          title="Önce yorum, sonra detay"
-          description="Analiz tamamlandığında burada kısa özet gösterilir. Tam yapılandırılmış sonuçlar ayrı detay sayfasında açılır."
-        />
-
-        {displayedResult && resultRecord ? (
-          <div className="card-grid">
-            <SurfaceCard
-              title={displayedResult.explanationTitle}
-              subtitle="Bu özet, uzun sonuçları ilk ekranda yığmadan hızlı yorum almanızı sağlar."
-              className="scenario-summary-card"
-            >
-              <p className="scenario-summary-text">{displayedResult.shortComment}</p>
-              <div className="hero-actions">
-                <button
-                  className="button button-primary"
-                  type="button"
-                  onClick={() =>
-                    navigate(`/senaryolar/ozel/${resultRecord.id}`, {
-                      state: { record: resultRecord },
-                    })
-                  }
-                >
-                  Detaylı yorumu aç
-                </button>
-              </div>
-            </SurfaceCard>
-          </div>
-        ) : (
-          <SurfaceCard
-            title="Henüz analiz yok"
-            subtitle="Bir senaryo gönderdiğinizde burada önce kısa yorum görünecek."
-          />
-        )}
       </section>
     </div>
   );
