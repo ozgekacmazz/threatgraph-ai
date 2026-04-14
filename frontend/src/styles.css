@@ -1471,6 +1471,21 @@ textarea {
   text-align: left;
 }
 
+.page-intro-actions {
+  margin-top: 22px;
+}
+
+.scenario-summary-card {
+  max-width: 820px;
+}
+
+.scenario-summary-text {
+  margin: 0;
+  color: var(--text-primary);
+  line-height: 1.7;
+  font-size: 1rem;
+}
+
 .metric-label {
   display: inline-block;
   margin-bottom: 8px;
