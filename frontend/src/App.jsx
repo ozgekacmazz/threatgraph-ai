@@ -6,6 +6,7 @@ import GraphPage from "./pages/GraphPage";
 import HomePage from "./pages/HomePage";
 import NewScenarioPage from "./pages/NewScenarioPage";
 import ScenarioDetailPage from "./pages/ScenarioDetailPage";
+import ScenarioSummaryPage from "./pages/ScenarioSummaryPage";
 import ScenariosPage from "./pages/ScenariosPage";
 
 function App() {
@@ -19,7 +20,8 @@ function App() {
           <Route path="/graf" element={<GraphPage />} />
           <Route path="/senaryolar" element={<ScenariosPage />} />
           <Route path="/senaryolar/yeni" element={<NewScenarioPage />} />
-          <Route path="/senaryolar/:scenarioKind/:scenarioId" element={<ScenarioDetailPage />} />
+          <Route path="/senaryolar/:scenarioKind/:scenarioId" element={<ScenarioSummaryPage />} />
+          <Route path="/senaryolar/:scenarioKind/:scenarioId/detay" element={<ScenarioDetailPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Route>
       </Routes>

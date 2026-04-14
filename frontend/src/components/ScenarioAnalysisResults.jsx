@@ -28,7 +28,7 @@ function ScenarioAnalysisResults({ displayedResult }) {
 
       {displayedResult.explanationText ? (
         <article className="result-metric-card result-metric-card-accent analysis-explanation-card">
-          <span className="metric-label">{displayedResult.explanationTitle}</span>
+          <span className="metric-label">Analiz yorumu</span>
           <p className="metric-value">{displayedResult.explanationText}</p>
           {displayedResult.explanationSections.length ? (
             <div className="analysis-explanation-sections">
@@ -47,31 +47,29 @@ function ScenarioAnalysisResults({ displayedResult }) {
       ) : null}
 
       <div className="result-grid result-grid-visible">
-        <ResultMetricCard title="Analiz rotası" value={displayedResult.analysisRoute} tone="accent" />
-        <ResultMetricCard title="Niyet" value={displayedResult.intent} tone="accent" />
+        <ResultMetricCard title="Analiz odağı" value={displayedResult.intent} tone="accent" />
         {displayedResult.matchedAttack ? (
           <ResultMetricCard
             title={
               displayedResult.matchedAttackExact
-                ? "Eşleşen saldırı / teknik"
-                : "Eşleşen saldırı / teknik (yaklaşık)"
+                ? "Öne çıkan saldırı / teknik"
+                : "Öne çıkan saldırı / teknik"
             }
             value={displayedResult.matchedAttack}
           />
         ) : null}
-        <ResultMetricCard title="Eşleşen artifact" value={displayedResult.matchedArtifact} />
+        <ResultMetricCard title="Merkez artifact" value={displayedResult.matchedArtifact} />
         <ResultMetricCard title="Kategori" value={displayedResult.matchedCategory} />
-        <ResultMetricCard title="Eşleşme yöntemi" value={displayedResult.mappingMethod} />
         <ResultMetricCard title="Güven düzeyi" value={displayedResult.confidence} />
 
         {displayedResult.extractedArtifacts.length ? (
-          <ResultMetricCard title="Çıkarılan artifact'ler" items={displayedResult.extractedArtifacts} />
+          <ResultMetricCard title="Senaryoda geçen artifact'ler" items={displayedResult.extractedArtifacts} />
         ) : null}
         {displayedResult.extractedAttacks.length ? (
-          <ResultMetricCard title="Çıkarılan saldırılar" items={displayedResult.extractedAttacks} />
+          <ResultMetricCard title="Senaryoda geçen saldırılar" items={displayedResult.extractedAttacks} />
         ) : null}
         {displayedResult.keywords.length ? (
-          <ResultMetricCard title="Anahtar kelimeler" items={displayedResult.keywords} />
+          <ResultMetricCard title="Öne çıkan terimler" items={displayedResult.keywords} />
         ) : null}
 
         <ResultMetricCard
@@ -87,33 +85,33 @@ function ScenarioAnalysisResults({ displayedResult }) {
         ) : null}
         {displayedResult.mayImpactAttacks.length ? (
           <ResultMetricCard
-            title="Yayılım kaynaklı saldırılar"
+            title="Olası yayılım / etki adımları"
             items={displayedResult.mayImpactAttacks}
           />
         ) : null}
         <ResultMetricCard
-          title="Doğrudan tactic'ler"
+          title="Doğrudan taktikler"
           items={displayedResult.directTactics}
           value={displayedResult.directTactics.length ? null : "Sinyal bulunamadı"}
         />
         <ResultMetricCard
-          title="Olası sonraki tactic'ler"
+          title="Olası sonraki taktikler"
           items={displayedResult.nextTactics}
           value={displayedResult.nextTactics.length ? null : "Sinyal bulunamadı"}
         />
         <ResultMetricCard
-          title="Top-5 saldırı tahmini"
+          title="Öne çıkan olası saldırılar"
           items={displayedResult.predictions}
           value={displayedResult.predictions.length ? null : "Tahmin üretilmedi"}
         />
         <ResultMetricCard
-          title="Savunma önerileri"
+          title="Önerilen savunma öncelikleri"
           items={displayedResult.defenses}
           value={displayedResult.defenses.length ? null : "Öneri üretilmedi"}
         />
         {displayedResult.lowConfidenceReason ? (
           <ResultMetricCard
-            title="Düşük güven açıklaması"
+            title="Analist notu"
             value={displayedResult.lowConfidenceReason}
           />
         ) : null}

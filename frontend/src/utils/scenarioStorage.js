@@ -1,6 +1,16 @@
 const CUSTOM_SCENARIO_PREFIX = "custom-scenario-analysis:";
 const PREDEFINED_SCENARIO_PREFIX = "predefined-scenario-analysis:";
 
+function isValidScenarioRecord(value) {
+  return Boolean(
+    value &&
+      typeof value === "object" &&
+      typeof value.id === "string" &&
+      typeof value.scenarioText === "string" &&
+      value.scenarioText.trim()
+  );
+}
+
 function safeRead(key) {
   if (typeof window === "undefined") {
     return null;
@@ -31,17 +41,27 @@ export function buildCustomScenarioId() {
 }
 
 export function saveCustomScenarioAnalysis(record) {
+  if (!isValidScenarioRecord(record)) {
+    return;
+  }
+
   safeWrite(`${CUSTOM_SCENARIO_PREFIX}${record.id}`, record);
 }
 
 export function loadCustomScenarioAnalysis(id) {
-  return safeRead(`${CUSTOM_SCENARIO_PREFIX}${id}`);
+  const record = safeRead(`${CUSTOM_SCENARIO_PREFIX}${id}`);
+  return isValidScenarioRecord(record) ? record : null;
 }
 
 export function savePredefinedScenarioAnalysis(record) {
+  if (!isValidScenarioRecord(record)) {
+    return;
+  }
+
   safeWrite(`${PREDEFINED_SCENARIO_PREFIX}${record.id}`, record);
 }
 
 export function loadPredefinedScenarioAnalysis(id) {
-  return safeRead(`${PREDEFINED_SCENARIO_PREFIX}${id}`);
+  const record = safeRead(`${PREDEFINED_SCENARIO_PREFIX}${id}`);
+  return isValidScenarioRecord(record) ? record : null;
 }

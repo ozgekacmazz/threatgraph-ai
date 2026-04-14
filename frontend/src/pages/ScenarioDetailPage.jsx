@@ -12,17 +12,22 @@ import { mapScenarioAnalysisResult } from "../utils/scenarioAnalysis";
 import {
   loadCustomScenarioAnalysis,
   loadPredefinedScenarioAnalysis,
+  saveCustomScenarioAnalysis,
   savePredefinedScenarioAnalysis,
 } from "../utils/scenarioStorage";
 
 function ScenarioDetailPage() {
   const { scenarioKind, scenarioId } = useParams();
   const location = useLocation();
-  const [loading, setLoading] = useState(scenarioKind === "hazir");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [record, setRecord] = useState(() => {
+    if (location.state?.record) {
+      return location.state.record;
+    }
+
     if (scenarioKind === "ozel") {
-      return location.state?.record || loadCustomScenarioAnalysis(scenarioId);
+      return loadCustomScenarioAnalysis(scenarioId);
     }
 
     return loadPredefinedScenarioAnalysis(scenarioId);
@@ -36,17 +41,64 @@ function ScenarioDetailPage() {
     return record
       ? {
           id: record.id,
-          title: "Oluşturulan Senaryo",
+          title: record.title || "Senaryo analizi",
           scenarioText: record.scenarioText,
-          previewComment: null,
         }
       : null;
   }, [record, scenarioId, scenarioKind]);
 
   const displayedResult = useMemo(
-    () => mapScenarioAnalysisResult(record?.result || null),
-    [record]
+    () =>
+      mapScenarioAnalysisResult(record?.result || null, {
+        id: scenario?.id || record?.id || "",
+        title: scenario?.title || record?.title || "",
+        questionText: scenario?.questionText || "",
+      }),
+    [record, scenario]
   );
+
+  const detailSummaryContent = useMemo(() => {
+    if (displayedResult) {
+      return {
+        summaryParagraph:
+          displayedResult.detailSummaryParagraph ||
+          displayedResult.detailIntroSummary ||
+          displayedResult.summaryIntro ||
+          "",
+        immediateActions: Array.isArray(displayedResult.summaryImmediateActions)
+          ? displayedResult.summaryImmediateActions.filter(Boolean)
+          : [],
+      };
+    }
+
+    if (scenarioKind === "hazir" && scenario) {
+      return {
+        summaryParagraph: [scenario.shortAnalysisIntro, scenario.shortAnalysisRisk]
+          .filter(Boolean)
+          .join(" "),
+        immediateActions: Array.isArray(scenario.shortImmediateActions)
+          ? scenario.shortImmediateActions.filter(Boolean)
+          : [],
+      };
+    }
+
+    return {
+      summaryParagraph: "",
+      immediateActions: [],
+    };
+  }, [displayedResult, scenario, scenarioKind]);
+
+  useEffect(() => {
+    if (!location.state?.record) {
+      return;
+    }
+
+    if (scenarioKind === "ozel") {
+      saveCustomScenarioAnalysis(location.state.record);
+    } else if (scenarioKind === "hazir") {
+      savePredefinedScenarioAnalysis(location.state.record);
+    }
+  }, [location.state, scenarioKind]);
 
   useEffect(() => {
     if (scenarioKind === "ozel") {
@@ -55,20 +107,16 @@ function ScenarioDetailPage() {
       return;
     }
 
-    if (scenarioKind !== "hazir") {
-      setLoading(false);
-      return;
-    }
-
     const selectedScenario = getPredefinedScenarioById(scenarioId);
     if (!selectedScenario) {
       setLoading(false);
-      setError("İstenen hazır senaryo bulunamadı.");
+      setError("İstenen senaryo bulunamadı.");
       return;
     }
 
     if (record?.result) {
       setLoading(false);
+      setError("");
       return;
     }
 
@@ -97,10 +145,7 @@ function ScenarioDetailPage() {
         setRecord(nextRecord);
       } catch (requestError) {
         if (!cancelled) {
-          setError(
-            requestError.message ||
-              "Hazır senaryo analizi alınamadı. Lütfen tekrar deneyin."
-          );
+          setError(requestError.message || "Detaylı analiz yüklenemedi. Lütfen tekrar deneyin.");
         }
       } finally {
         if (!cancelled) {
@@ -116,101 +161,72 @@ function ScenarioDetailPage() {
     };
   }, [record, scenarioId, scenarioKind]);
 
-  const detailTitle =
-    scenarioKind === "hazir" ? "Hazır senaryo analizi" : "Senaryo detay analizi";
-
   return (
     <div className="page-section">
       <section className="container page-intro section-panel section-panel-dark">
         <SectionHeader
-          eyebrow="Senaryo Detayı"
-          title={scenario?.title || detailTitle}
-          description={
-            scenario?.scenarioText ||
-            "Bu sayfa uzun açıklama, analiz kartları, artifact çıkarımları, saldırılar, tactic'ler, savunmalar ve ML sıralamasını gösterir."
-          }
+          eyebrow="Senaryo Analizi"
+          title={scenario?.title || "Detaylı analiz"}
+          description="Bu ekranda özet yorum ile yapısal ThreatGraph AI sonucu aynı veri temeli üzerinden birlikte sunulur."
         />
       </section>
 
       <section className="container section-panel section-panel-workspace">
-        <div className="analysis-workspace-shell">
-          <div className="analysis-main-column">
-            <SurfaceCard
-              title="Senaryo özeti"
-              subtitle="Detay görünümü her iki senaryo türü için de aynı kapsamlı analiz bileşenini kullanır."
-            >
-              <div className="scenario-meta">
-                <span>Senaryo tipi</span>
-                <p>{scenarioKind === "hazir" ? "Hazır senaryo" : "Kullanıcı tarafından oluşturuldu"}</p>
-              </div>
-              {scenario?.previewComment ? (
-                <div className="scenario-meta">
-                  <span>Kısa yorum</span>
-                  <p>{scenario.previewComment}</p>
-                </div>
-              ) : null}
-              {displayedResult?.shortComment ? (
-                <div className="scenario-meta">
-                  <span>Analiz özeti</span>
-                  <p>{displayedResult.shortComment}</p>
-                </div>
-              ) : null}
-              <div className="hero-actions">
-                <Link className="button button-secondary" to="/senaryolar">
-                  Senaryo listesine dön
-                </Link>
-                <Link className="button button-secondary" to="/senaryolar/yeni">
-                  Yeni senaryo yaz
-                </Link>
-              </div>
-            </SurfaceCard>
+        <SurfaceCard title="Senaryo özeti" className="scenario-summary-card">
+          {(scenario?.questionText || scenario?.scenarioText) && (
+            <div className="scenario-summary-block">
+              <p>{scenario.questionText || scenario.scenarioText}</p>
+            </div>
+          )}
+          {detailSummaryContent.summaryParagraph ? (
+            <div className="scenario-summary-block">
+              <p className="scenario-summary-text">{detailSummaryContent.summaryParagraph}</p>
+            </div>
+          ) : null}
+          {detailSummaryContent.immediateActions.length ? (
+            <div className="scenario-summary-actions">
+              <strong>İlk yapılması gerekenler</strong>
+              <ul>
+                {detailSummaryContent.immediateActions.map((action) => (
+                  <li key={action}>{action}</li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
+          <div className="hero-actions">
+            <Link className="button button-secondary" to={`/senaryolar/${scenarioKind}/${scenarioId}`}>
+              Senaryo analizine dön
+            </Link>
+            <Link className="button button-secondary" to="/senaryolar">
+              Senaryo listesi
+            </Link>
           </div>
-
-          <div className="analysis-side-column">
-            <SurfaceCard
-              title="Kapsam"
-              subtitle="Uzun yapılandırılmış çıktı bu sayfada bir araya getirilir."
-            >
-              <div className="pill-grid">
-                <span className="feature-pill">Uzun açıklama</span>
-                <span className="feature-pill">Artifact'ler</span>
-                <span className="feature-pill">Saldırılar</span>
-                <span className="feature-pill">Tactic akışı</span>
-                <span className="feature-pill">Savunmalar</span>
-                <span className="feature-pill">ML ranking</span>
-              </div>
-            </SurfaceCard>
-          </div>
-        </div>
+        </SurfaceCard>
       </section>
 
       <section className="container section-panel section-panel-dark">
         <SectionHeader
           eyebrow="Kapsamlı Analiz"
           title="Yapılandırılmış sonuçlar"
-          description="Bu alan mevcut backend analiz mantığını kullanır ve sonuçları detaylı kartlar halinde sunar."
+          description="Açıklama, artifact etkileri, ilişkili saldırılar, tactic akışı, savunma önerileri ve tanısal alanlar bu bölümde birlikte gösterilir."
         />
 
         {loading ? (
           <SurfaceCard
-            title="Senaryo analiz ediliyor"
-            subtitle={
-              scenarioKind === "hazir"
-                ? "Hazır senaryo için backend'den kapsamlı sonuçlar alınıyor."
-                : "Detay verisi hazırlanıyor."
-            }
+            title="Kapsamlı analiz hazırlanıyor"
+            subtitle="ThreatGraph AI sonuçları bu çalışma alanına yükleniyor."
           />
         ) : error ? (
           <SurfaceCard title="Detay açılamadı" subtitle={error}>
             {scenarioKind === "hazir" ? (
               <p className="support-copy">
-                Hazır senaryolar: {predefinedScenarios.length} adet kayıtlı seçenek üzerinden
-                yüklenir. İsterseniz farklı bir senaryo deneyebilirsiniz.
+                Hazır senaryolar: {predefinedScenarios.length} kayıt üzerinden açılır. İsterseniz
+                senaryo listesinden farklı bir kayıt seçebilirsiniz.
               </p>
             ) : (
               <p className="support-copy">
-                Bu özel senaryonun geçici analiz verisi bulunamadı. Aynı metni yeniden analiz
-                ederek yeni bir detay kaydı oluşturabilirsiniz.
+                Bu özel senaryonun detay verisi bulunamadı. Aynı senaryoyu yeniden yorumlayarak
+                yeni bir özet ve detay akışı başlatabilirsiniz.
               </p>
             )}
           </SurfaceCard>
