@@ -130,6 +130,26 @@ const ACTION_BUILDERS = {
     "Beklenmeyen Kerberos taleplerini ve ticket yeniden kullanımını hızla sınırlandırın; etkilenen hesap veya servisleri izole edin",
     "Gerekli durumlarda parola rotasyonu, oturum sonlandırma ve hassas servislerde erişim daraltması uygulayın",
   ],
+  dcsync_containment: () => [
+    "Domain controller replication taleplerini ve DCSync benzeri GetNCChanges akışlarını denetleyerek hangi hesabın bu erişimi kullandığını doğrulayın",
+    "KRBTGT hesabı ve ilişkili yüksek ayrıcalıklı kimlikler için kapsam incelemesi başlatın; gerekli durumlarda parola rotasyonu planlayın",
+    "Replication yetkisine sahip ayrıcalıklı hesapları izole edin ve domain controller erişimlerini daraltarak ek kimlik sızıntısını sınırlandırın",
+  ],
+  lsass_memory_response: () => [
+    "Bellek dökümü alan veya LSASS erişimi kuran süreçleri tespit edip dump işlemi zincirini doğrulayın",
+    "LSASS handle erişimlerini ve ilgili proses/hesap bağlamını inceleyerek yetkisiz credential extraction girişimlerini sınırlandırın",
+    "Etkilenmiş olabilecek kimlikler için geniş kapsamlı parola sıfırlama ve oturum kapatma taraması başlatın",
+  ],
+  credential_dumping_response: () => [
+    "Dump alınmış olabilecek hash ve parola materyalini kapsamlı rotasyona alın",
+    "LSASS, SAM ve security hive erişim loglarını inceleyin",
+    "Dump sonrası kullanılan kimliklerle açılmış lateral movement oturumlarını doğrulayın",
+  ],
+  rdp_hijack_response: () => [
+    "Aktif RDP oturumlarını sonlandırın ve beklenmeyen shadow/attach işlemlerini durdurarak oturum zincirini kesin",
+    "RDP oturum sahipliğini doğrulayın; hangi kullanıcı ve süreç bağlamının mevcut oturumu devraldığını inceleyin",
+    "Uzak host girişlerini, yeni logon olaylarını ve oturum devralma zaman çizelgesini korele ederek ek yayılımı araştırın",
+  ],
   remote_reuse_containment: () => [
     "SMB, RDP, WinRM veya PsExec benzeri uzak yönetim izlerinde aynı kimlik materyalinin tekrar kullanımını doğrulayın",
     "Kaynak hostu izole edin, paralel logon izlerini çıkarın ve etkilenen kimlikler için rotasyon başlatın",
@@ -261,6 +281,10 @@ function humanizeDefenseSummaryLabel(label) {
 }
 
 function buildDefenseTheme(profile, evidence) {
+  if (profile.defenseEmphasisStrategy === "persistence_control") {
+    return "zamanlanmış görev kayıtları, tetikleyici zincirleri ve yetkisiz görev oluşturma davranışları savunma tarafında ilk odak olmalıdır";
+  }
+
   if (evidence.defenses.length) {
     const concepts = evidence.defenses.map((label) => humanizeDefenseSummaryLabel(label)).slice(0, 2);
     return `${joinNatural(concepts, 2)} savunma tarafında ilk odak olmalıdır`;
@@ -293,6 +317,130 @@ function buildContinuationSentence(theme, seedText) {
   const seedValue = [...normalizedSeed].reduce((total, character) => total + character.charCodeAt(0), 0);
   const pattern = CONTINUATION_PATTERNS[seedValue % CONTINUATION_PATTERNS.length];
   return pattern(theme);
+}
+
+function lowercaseFirst(value) {
+  const normalized = normalizeText(value);
+  if (!normalized) {
+    return "";
+  }
+
+  return `${normalized.charAt(0).toLocaleLowerCase("tr-TR")}${normalized.slice(1)}`;
+}
+
+function extractCanonicalTitleAttackName(value) {
+  const normalized = normalizeText(value);
+  if (!normalized) {
+    return "";
+  }
+
+  const explicitScenarioName = normalized.match(/^(.+?)\s+senaryosu$/i);
+  if (explicitScenarioName?.[1]) {
+    return normalizeText(explicitScenarioName[1]);
+  }
+
+  const questionLead = normalized.match(/^(.+?)\s+(sonras[ıi]|tespit edilirse|ele geçirilirse|riski|kompromize olursa)/i);
+  if (questionLead?.[1]) {
+    return normalizeText(questionLead[1]);
+  }
+
+  return "";
+}
+
+function resolvePrimaryAttackName(profile, evidence) {
+  if (profile.id === "credential_dumping") {
+    return normalizeText(profile.canonicalAttackName);
+  }
+
+  const titleCanonicalName =
+    extractCanonicalTitleAttackName(evidence.scenarioTitle) ||
+    extractCanonicalTitleAttackName(evidence.questionText);
+
+  if (titleCanonicalName) {
+    return titleCanonicalName;
+  }
+
+  if (evidence.matchedAttack) {
+    return evidence.matchedAttack;
+  }
+
+  const candidates = [
+    ...evidence.directAttacks,
+    ...evidence.extractedAttacks,
+    ...evidence.predictions,
+    ...evidence.mayImpactAttacks,
+  ]
+    .map((value) => normalizeText(value))
+    .filter(Boolean);
+
+  for (const candidate of candidates) {
+    const normalizedCandidate = normalizeForMatch(candidate);
+    const matchesProfile = [...profile.backendAttackNames, ...profile.aliases]
+      .map((value) => normalizeForMatch(value))
+      .some((value) => value && (normalizedCandidate.includes(value) || value.includes(normalizedCandidate)));
+
+    if (matchesProfile) {
+      return candidate;
+    }
+  }
+
+  return normalizeText(profile.canonicalAttackName);
+}
+
+const CANONICAL_INTERPRETATION_CONTINUATIONS = {
+  credential_exposure:
+    "iletim halindeki veriyi görünür kılarak açık iletişim sızıntısı, Session Hijacking ve Credential Theft riskini yükseltebilir",
+  session_token_replay:
+    "ele geçirilmiş oturum belirteçleri üzerinden mevcut erişimin yeniden kullanılmasına izin verebilir",
+  stolen_identity_chain:
+    "ele geçirilmiş kimlik bilgileri üzerinden birden fazla sistemde yetkisiz erişim zinciri başlatabilir",
+  remote_service_compromise:
+    "zafiyetli uç noktalar üzerinden ilk erişim sağlayıp servis bağlamında daha derin bir ele geçirilme zinciri oluşturabilir",
+  internet_facing_remote_access:
+    "internete açık VPN, RDP veya benzeri servisler üzerinden yetkisiz erişim için doğrudan giriş noktası sağlayabilir",
+  deceptive_process_branching:
+    "süreç zincirini aldatıcı dallara bölerek gizli yürütme kolları ve iz bırakmayan çoğaltılmış çalıştırmalar üretebilir",
+  dns_signal_chain:
+    "arka planda gizli haberleşme, komut aktarımı veya veri çıkışı için kullanılabilecek bir kanal oluşturabilir",
+  resolution_indirection:
+    "dış altyapıya yönlendirme, geri çağrı trafiği ve gizlenmiş erişim zincirleri oluşturabilir",
+  authentication_pressure:
+    "hedeflenen hesaplarda zayıf kimlik doğrulama noktalarını istismar etmeye çalışır",
+  broad_auth_surface:
+    "geniş bir hesap kümesini düşük frekansta baskılayarak kurumsal giriş yüzeyinde sessiz bir risk üretebilir",
+  defense_visibility_loss:
+    "saldırganın daha az görünür hareket etmesine ve izleme kör noktaları oluşturmasına yol açabilir",
+  persistence_reentry:
+    "saldırgana tekrar eden çalıştırma ve sistemde kalıcı yeniden giriş imkânı sağlayabilir",
+  trusted_auth_reuse:
+    "güvenilen kimlik bağlamını yeniden kullanarak servis erişimini meşru görünüm altında genişletebilir",
+  directory_replication_abuse:
+    "domain replication haklarını kötüye kullanarak hassas kimlik verilerini domain controller akışlarından çekebilir",
+  lsass_memory_access:
+    "lsass belleğine erişerek oturum, parola ve secret materyalini çıkarmaya zemin hazırlayabilir",
+  credential_dumping_chain:
+    "sistem belleği, LSASS, SAM veya credential store kaynaklarından çıkarılan kimlik materyalini kötüye kullanarak takip eden yetkisiz erişimleri hızlandırabilir",
+  rdp_session_takeover:
+    "aktif uzak masaüstü oturumlarını devralarak mevcut kullanıcı bağlamında yetkisiz erişim sürdürebilir",
+  remote_auth_reuse:
+    "uzak yönetim yüzeylerinde parola gerektirmeden Lateral Movement başlatabilir",
+  account_takeover:
+    "ele geçirilmiş kimlik bilgisi veya MFA bağlamı üzerinden hesap devralma ve yetkisiz servis erişimi riskini hızla yükseltebilir",
+  shared_service_spread:
+    "paylaşımlı servisler ve çapraz host erişimleri üzerinden geniş bir etki yüzeyi yaratabilir",
+  dns_exfiltration:
+    "veri sızdırma ve düşük görünürlüklü komut aktarımı olasılığını doğrudan yükseltebilir",
+};
+
+function buildInterpretationLead(profile, evidence, dominantRiskTheme) {
+  const primaryAttackName = resolvePrimaryAttackName(profile, evidence);
+  const continuation = CANONICAL_INTERPRETATION_CONTINUATIONS[profile.summaryStrategy];
+
+  if (!primaryAttackName || !continuation) {
+    return dominantRiskTheme;
+  }
+
+  return `${primaryAttackName}, ${lowercaseFirst(continuation)}`;
 }
 
 function buildPlanThemes(profile, evidence, focusArtifacts, directTactics, nextTactics) {
@@ -432,11 +580,11 @@ function buildPlanThemes(profile, evidence, focusArtifacts, directTactics, nextT
       return {
         ...defaults,
         dominant_risk_theme:
-          "zamanlanmış görev bağlamı saldırgana tekrar eden çalıştırma ve sistemde kalıcı yeniden giriş imkânı sağlayabilir",
+          "zamanlanmış görev bağlamı saldırgana tekrar eden çalıştırma ve kalıcılık zinciri sağlayabilir",
         spread_theme:
-          "aynı görev modeli başka hostlara taşınarak kalıcılık ve takip eden yürütme zincirleri oluşturabilir",
+          "aynı görev modeli başka hostlara taşınarak persistence ve takip eden yürütme zincirleri oluşturabilir",
         likely_affected_artifact_theme:
-          "Bu olayda en kritik etki zamanlanmış görev kayıtları, çalıştırma bağlamı ve ilişkili host kalıcılığı üzerinde görülür",
+          "İlk dikkat edilmesi gereken alan zamanlanmış görev kayıtları, tetikleyici zincirleri ve yetkisiz görev oluşturma davranışlarıdır",
       };
     case "trusted_auth_reuse":
       return {
@@ -447,6 +595,46 @@ function buildPlanThemes(profile, evidence, focusArtifacts, directTactics, nextT
           "ticket tabanlı oturumlar ayrıcalıklı servisler ve çapraz sistem erişimleri üzerinden yayılabilir",
         likely_affected_artifact_theme:
           "İlk risk odağı ticket ile açılan oturumlar, servis erişimleri ve ayrıcalıklı kaynak kullanımıdır",
+      };
+    case "directory_replication_abuse":
+      return {
+        ...defaults,
+        dominant_risk_theme:
+          "Directory replication akışının kötüye kullanılması, domain controller bağlamından hassas kimlik verilerinin çekilmesine yol açabilir",
+        spread_theme:
+          "Replication yetkisi korunursa elde edilen sırlar ayrıcalıklı kimlik kötüye kullanımı ve yeni domain erişimlerine dönüşebilir",
+        likely_affected_artifact_theme:
+          "İlk dikkat edilmesi gereken alan domain controller replication istekleri, KRBTGT ilişkisi ve ayrıcalıklı replication hesaplarıdır",
+      };
+    case "lsass_memory_access":
+      return {
+        ...defaults,
+        dominant_risk_theme:
+          "LSASS bellek erişimi, oturum ve parola materyalinin host üzerinde dışa çıkarılmasına imkân verebilir",
+        spread_theme:
+          "Bellekten çıkarılan sırlar korunursa aynı kimliklerle yeni host erişimleri ve ayrıcalık genişlemesi görülebilir",
+        likely_affected_artifact_theme:
+          "İlk dikkat edilmesi gereken alan dump işlemleri, LSASS handle erişimleri ve etkilenen host üzerindeki kimlik materyalidir",
+      };
+    case "credential_dumping_chain":
+      return {
+        ...defaults,
+        dominant_risk_theme:
+          "Credential dumping, sistem belleği, LSASS, SAM veya credential store kaynaklarından çıkarılan kimlik materyalini kötüye kullanarak birden fazla kimlik zincirini eşzamanlı riske atabilir",
+        spread_theme:
+          "Dump edilmiş hash, dumped secrets ve yeniden kullanılan kimlikler ayrıcalıklı hesap maruziyeti ile takip eden kötüye kullanımlara dönüşebilir",
+        likely_affected_artifact_theme:
+          "İlk dikkat edilmesi gereken alan dumped hash kapsamı, dumped secrets, yeniden kullanılan kimlikler ve ayrıcalıklı hesap maruziyetidir",
+      };
+    case "rdp_session_takeover":
+      return {
+        ...defaults,
+        dominant_risk_theme:
+          "RDP oturum devralma, mevcut kullanıcı bağlamını yeniden kullanarak uzak host üzerinde görünürde meşru erişim sürdürebilir",
+        spread_theme:
+          "Devralınan oturum korunursa aynı hosttan yeni uzak erişimler, araç çalıştırmaları ve yanal geçiş adımları başlatılabilir",
+        likely_affected_artifact_theme:
+          "İlk dikkat edilmesi gereken alan aktif RDP oturumları, oturum sahipliği değişimleri ve uzak host logon korelasyonudur",
       };
     case "remote_auth_reuse":
       return {
@@ -529,7 +717,8 @@ function planScenarioNarrative(input, evidence, resolution) {
     .slice(0, 3);
 
   const continuationSentence = buildContinuationSentence(themes.likely_follow_on_theme, `${resolution.profileId}:${themes.spread_theme}`);
-  const interpretation = toSentence(`${themes.dominant_risk_theme}. ${themes.likely_affected_artifact_theme}`);
+  const interpretationLead = buildInterpretationLead(profile, evidence, themes.dominant_risk_theme);
+  const interpretation = toSentence(`${interpretationLead}. ${themes.likely_affected_artifact_theme}`);
   const immediateRisk = toSentence(`${themes.spread_theme}. ${continuationSentence}`);
   const likelyNextStep = toSentence(
     `${themes.defense_priority_theme}. ${
@@ -543,6 +732,7 @@ function planScenarioNarrative(input, evidence, resolution) {
     resolution,
     plan: {
       dominant_risk_theme: themes.dominant_risk_theme,
+      interpretation_lead: interpretationLead,
       spread_theme: themes.spread_theme,
       likely_affected_artifact_theme: themes.likely_affected_artifact_theme,
       likely_follow_on_theme: continuationSentence,

@@ -9,6 +9,7 @@ import {
 } from "../data/predefinedScenarios";
 import { analyzeScenario } from "../services/api";
 import { mapScenarioAnalysisResult } from "../utils/scenarioAnalysis";
+import { exportScenarioDetailPdf } from "../utils/scenarioPdfExport";
 import {
   loadCustomScenarioAnalysis,
   loadPredefinedScenarioAnalysis,
@@ -16,11 +17,38 @@ import {
   savePredefinedScenarioAnalysis,
 } from "../utils/scenarioStorage";
 
+function isGenericScenarioTitle(value) {
+  return !value || value.trim().toLocaleLowerCase("tr-TR") === "senaryo analizi";
+}
+
+function deriveScenarioDisplayTitle({ scenario, displayedResult, scenarioKind }) {
+  const currentTitle = typeof scenario?.title === "string" ? scenario.title.trim() : "";
+  if (scenarioKind === "hazir" || !isGenericScenarioTitle(currentTitle)) {
+    return currentTitle || "Senaryo analizi";
+  }
+
+  if (displayedResult?.matchedAttack) {
+    return `${displayedResult.matchedAttack} senaryosu`;
+  }
+
+  const sourceText = String(scenario?.questionText || scenario?.scenarioText || "")
+    .replace(/\s+/g, " ")
+    .trim();
+
+  if (!sourceText) {
+    return "Senaryo analizi";
+  }
+
+  const firstSentence = sourceText.match(/.+?[.!?](?=\s|$)/)?.[0]?.trim() || sourceText;
+  return firstSentence.length <= 90 ? firstSentence : `${firstSentence.slice(0, 87).trim()}...`;
+}
+
 function ScenarioDetailPage() {
   const { scenarioKind, scenarioId } = useParams();
   const location = useLocation();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [pdfError, setPdfError] = useState("");
   const [record, setRecord] = useState(() => {
     if (location.state?.record) {
       return location.state.record;
@@ -57,6 +85,16 @@ function ScenarioDetailPage() {
     [record, scenario]
   );
 
+  const displayScenarioTitle = useMemo(
+    () => deriveScenarioDisplayTitle({ scenario, displayedResult, scenarioKind }),
+    [scenario, displayedResult, scenarioKind]
+  );
+
+  const displayScenario = useMemo(
+    () => (scenario ? { ...scenario, title: displayScenarioTitle } : null),
+    [scenario, displayScenarioTitle]
+  );
+
   const detailSummaryContent = useMemo(() => {
     if (displayedResult) {
       return {
@@ -71,13 +109,13 @@ function ScenarioDetailPage() {
       };
     }
 
-    if (scenarioKind === "hazir" && scenario) {
+    if (scenarioKind === "hazir" && displayScenario) {
       return {
-        summaryParagraph: [scenario.shortAnalysisIntro, scenario.shortAnalysisRisk]
+        summaryParagraph: [displayScenario.shortAnalysisIntro, displayScenario.shortAnalysisRisk]
           .filter(Boolean)
           .join(" "),
-        immediateActions: Array.isArray(scenario.shortImmediateActions)
-          ? scenario.shortImmediateActions.filter(Boolean)
+        immediateActions: Array.isArray(displayScenario.shortImmediateActions)
+          ? displayScenario.shortImmediateActions.filter(Boolean)
           : [],
       };
     }
@@ -86,7 +124,7 @@ function ScenarioDetailPage() {
       summaryParagraph: "",
       immediateActions: [],
     };
-  }, [displayedResult, scenario, scenarioKind]);
+  }, [displayedResult, displayScenario, scenarioKind]);
 
   useEffect(() => {
     if (!location.state?.record) {
@@ -161,21 +199,34 @@ function ScenarioDetailPage() {
     };
   }, [record, scenarioId, scenarioKind]);
 
+  async function handlePdfExport() {
+    try {
+      setPdfError("");
+      await exportScenarioDetailPdf({
+        scenario: displayScenario,
+        detailSummaryContent,
+        displayedResult,
+      });
+    } catch (exportError) {
+      setPdfError(exportError.message || "PDF oluşturulamadı. Lütfen tekrar deneyin.");
+    }
+  }
+
   return (
     <div className="page-section">
       <section className="container page-intro section-panel section-panel-dark">
         <SectionHeader
           eyebrow="Senaryo Analizi"
-          title={scenario?.title || "Detaylı analiz"}
-          description="Bu ekranda özet yorum ile yapısal ThreatGraph AI sonucu aynı veri temeli üzerinden birlikte sunulur."
+          title={displayScenario?.title || "Detaylı analiz"}
+          description="Bu ekranda özet yorum ile yapılandırılmış ThreatGraph AI sonucu aynı veri temeli üzerinden birlikte sunulur."
         />
       </section>
 
       <section className="container section-panel section-panel-workspace">
         <SurfaceCard title="Senaryo özeti" className="scenario-summary-card">
-          {(scenario?.questionText || scenario?.scenarioText) && (
+          {(displayScenario?.questionText || displayScenario?.scenarioText) && (
             <div className="scenario-summary-block">
-              <p>{scenario.questionText || scenario.scenarioText}</p>
+              <p>{displayScenario.questionText || displayScenario.scenarioText}</p>
             </div>
           )}
           {detailSummaryContent.summaryParagraph ? (
@@ -194,6 +245,9 @@ function ScenarioDetailPage() {
             </div>
           ) : null}
           <div className="hero-actions">
+            <button className="button button-secondary" type="button" onClick={handlePdfExport}>
+              PDF olarak indir
+            </button>
             <Link className="button button-secondary" to={`/senaryolar/${scenarioKind}/${scenarioId}`}>
               Senaryo analizine dön
             </Link>
@@ -201,6 +255,7 @@ function ScenarioDetailPage() {
               Senaryo listesi
             </Link>
           </div>
+          {pdfError ? <p className="helper-note helper-note-warning">{pdfError}</p> : null}
         </SurfaceCard>
       </section>
 
@@ -208,7 +263,7 @@ function ScenarioDetailPage() {
         <SectionHeader
           eyebrow="Kapsamlı Analiz"
           title="Yapılandırılmış sonuçlar"
-          description="Açıklama, artifact etkileri, ilişkili saldırılar, tactic akışı, savunma önerileri ve tanısal alanlar bu bölümde birlikte gösterilir."
+          description="Açıklama, artifact etkileri, ilişkili saldırılar, taktik akışı ve savunma öncelikleri bu bölümde birlikte gösterilir."
         />
 
         {loading ? (
