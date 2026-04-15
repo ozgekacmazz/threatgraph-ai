@@ -1,5 +1,19 @@
 function normalizeText(value) {
-  return String(value || "").replace(/\s+/g, " ").trim();
+  return String(value || "")
+    .replace(/Ä±/g, "ı")
+    .replace(/Ä°/g, "İ")
+    .replace(/Ã¼/g, "ü")
+    .replace(/Ãœ/g, "Ü")
+    .replace(/Ã¶/g, "ö")
+    .replace(/Ã–/g, "Ö")
+    .replace(/ÅŸ/g, "ş")
+    .replace(/Åž/g, "Ş")
+    .replace(/Ã§/g, "ç")
+    .replace(/Ã‡/g, "Ç")
+    .replace(/ÄŸ/g, "ğ")
+    .replace(/Äž/g, "Ğ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function unique(values) {

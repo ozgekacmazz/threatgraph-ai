@@ -1,4 +1,38 @@
-export const predefinedScenarios = [
+import { buildScenarioNarrative } from "../utils/scenarioNarrativeEngine.js";
+
+function buildPredefinedNarrativeContent(scenario) {
+  const narrative = buildScenarioNarrative({
+    scenarioId: scenario.id,
+    scenarioTitle: scenario.title,
+    questionText: scenario.questionText,
+    scenarioText: scenario.scenarioText,
+    matchedArtifact: "",
+    matchedAttack: "",
+    directAttacks: [],
+    mayImpactArtifacts: [],
+    mayImpactAttacks: [],
+    directTactics: [],
+    nextTactics: [],
+    defenses: [],
+    extractedArtifacts: [],
+    extractedAttacks: [],
+    predictions: [],
+    explanationText: "",
+    explanationSections: [],
+    confidence: "",
+    mappingMethod: "",
+    lowConfidenceReason: "",
+  });
+
+  return {
+    shortPreview: narrative.interpretation,
+    shortAnalysisIntro: narrative.interpretation,
+    shortAnalysisRisk: narrative.immediateRisk,
+    shortImmediateActions: narrative.actions,
+  };
+}
+
+const basePredefinedScenarios = [
   {
     id: "credential-theft-risk-chain",
     title: "Phishing Sonrası Kimlik Bilgisi veya MFA Token Ele Geçirilirse Ne Olabilir?",
@@ -90,6 +124,11 @@ export const predefinedScenarios = [
       "Domain hesabı compromise olduysa hangi kimlikler, host'lar, servisler ve kimlik doğrulama artifact'leri etkilenebilir? Takip eden saldırıları, olası yayılımı ve öncelikli savunma adımlarını analiz et.",
   },
 ];
+
+export const predefinedScenarios = basePredefinedScenarios.map((scenario) => ({
+  ...scenario,
+  ...buildPredefinedNarrativeContent(scenario),
+}));
 
 export function getPredefinedScenarioById(scenarioId) {
   return predefinedScenarios.find((scenario) => scenario.id === scenarioId) || null;

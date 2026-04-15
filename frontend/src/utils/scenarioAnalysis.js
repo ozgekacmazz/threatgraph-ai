@@ -1,12 +1,161 @@
 import { buildScenarioNarrative } from "./scenarioNarrativeEngine.js";
 
-function normalizeText(value, fallback = "-") {
+function cleanText(value, fallback = "") {
   if (typeof value !== "string") {
     return fallback;
   }
 
-  const trimmed = value.trim();
-  return trimmed || fallback;
+  return value
+    .replace(/Ã„Â±/g, "ı")
+    .replace(/Ã„Â°/g, "İ")
+    .replace(/ÃƒÂ¼/g, "ü")
+    .replace(/ÃƒÅ“/g, "Ü")
+    .replace(/ÃƒÂ¶/g, "ö")
+    .replace(/Ãƒâ€“/g, "Ö")
+    .replace(/Ã…Å¸/g, "ş")
+    .replace(/Ã…Å¾/g, "Ş")
+    .replace(/ÃƒÂ§/g, "ç")
+    .replace(/Ãƒâ€¡/g, "Ç")
+    .replace(/Ã„Å¸/g, "ğ")
+    .replace(/Ã„Å¾/g, "Ğ")
+    .replace(/Ã¢â‚¬â„¢/g, "'")
+    .replace(/Ã¢â‚¬Â¢/g, "•")
+    .replace(/\s+/g, " ")
+    .trim() || fallback;
+}
+
+function normalizeText(value, fallback = "-") {
+  return cleanText(value, fallback);
+}
+
+const CANONICAL_NAME_REPLACEMENTS = [
+  [/Uzak servis istismar[ıi]/gi, "Exploitation of Remote Services"],
+  [/komut ve kontrol davran[ıi][şs][ıi]/gi, "Command and Control"],
+  [/komut ve kontrol/gi, "Command and Control"],
+  [/kimlik bilgisi edinimi/gi, "Credential Access"],
+  [/savunma atlatma davran[ıi][şs][ıi]/gi, "Defense Evasion"],
+  [/savunma atlatma/gi, "Defense Evasion"],
+  [/tetiklenen çal[ıi][şs]t[ıi]rma zinciri/gi, "Execution"],
+  [/ke[şs]if faaliyeti/gi, "Discovery"],
+  [/yanal yay[ıi]l[ıi]m/gi, "Lateral Movement"],
+  [/ayr[ıi]cal[ıi]k y[üu]kseltme/gi, "Privilege Escalation"],
+];
+
+function preserveCanonicalNames(value) {
+  return CANONICAL_NAME_REPLACEMENTS.reduce(
+    (text, [pattern, canonicalName]) => text.replace(pattern, canonicalName),
+    cleanText(value)
+  );
+}
+
+const CANONICAL_NAME_PATTERNS_CONTEXTUAL = {
+  "Disable or Modify Tools": [
+    /g[üu]venlik ajanlar[ıi]n[ıi]n devre d[ıi][şs][ıi] b[ıi]rak[ıi]lmas[ıi]/gi,
+    /telemetrinin kesilmesi/gi,
+  ],
+  "Pass-the-Hash": [
+    /yeniden kullan[ıi]lan kimlik materyali/gi,
+    /kimlik materyalinin yeniden kullan[ıi]lmas[ıi]/gi,
+  ],
+  "Exploitation of Remote Services": [/uzak servis istismar[ıi]/gi],
+  "Credential Stuffing": [/tekrarl[ıi] parola tahmini bask[ıi]s[ıi]/gi],
+  "Session Hijacking": [/oturum ele ge[çc]irme/gi],
+  "Credential Theft": [/kimlik bilgisi if[şs]as[ıi]/gi],
+  "Command and Control": [/komut ve kontrol davran[ıi][şs][ıi]/gi, /komut ve kontrol/gi],
+  "Credential Access": [/kimlik bilgisi edinimi/gi],
+  "Defense Evasion": [/savunma atlatma davran[ıi][şs][ıi]/gi, /savunma atlatma/gi],
+  Execution: [/tetiklenen [çc]al[ıi][şs]t[ıi]rma zinciri/gi],
+  Discovery: [/ke[şs]if faaliyeti/gi],
+  Collection: [/veri toplama ad[ıi]mlar[ıi]/gi],
+  Exfiltration: [/veri s[ıi]zd[ıi]rma/gi],
+  "Lateral Movement": [/yanal yay[ıi]l[ıi]m/gi],
+  "Privilege Escalation": [/ayr[ıi]cal[ıi]k y[üu]kseltme/gi],
+  "Connection Attempt Analysis": [
+    /uzak servis ba[ğg]lant[ıi] giri[şs]imlerinin ola[ğg]and[ıi][şs][ıi] eri[şs]im desenleri a[çc][ıi]s[ıi]ndan izlenmesi/gi,
+  ],
+  "Operational Process Monitoring": [
+    /i[şs]lem zinciri davran[ıi][şs]lar[ıi]n[ıi]n ve ola[ğg]and[ıi][şs][ıi] s[üu]re[çc] ak[ıi][şs]lar[ıi]n[ıi]n izlenmesi/gi,
+  ],
+  DCSync: [/domain replikasyon zinciri/gi],
+  "Windows Management Instrumentation": [/windows y[öo]netim altyap[ıi]s[ıi]/gi],
+};
+
+function escapeRegExp(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function collectCanonicalNames(mappedResult, scenarioContext = {}) {
+  const canonicalNames = new Set();
+  const candidateValues = [
+    mappedResult?.matchedAttack,
+    mappedResult?.fallbackAttackFamily,
+    scenarioContext?.title,
+    scenarioContext?.questionText,
+    ...titlesOf(mappedResult?.directAttacks),
+    ...titlesOf(mappedResult?.mayImpactAttacks),
+    ...titlesOf(mappedResult?.directTactics),
+    ...titlesOf(mappedResult?.nextTactics),
+    ...titlesOf(mappedResult?.defenses),
+    ...titlesOf(mappedResult?.extractedAttacks),
+    ...titlesOf(mappedResult?.predictions),
+  ];
+
+  candidateValues
+    .map((value) => cleanText(value))
+    .filter(Boolean)
+    .forEach((value) => {
+      if (CANONICAL_NAME_PATTERNS_CONTEXTUAL[value]) {
+        canonicalNames.add(value);
+      }
+    });
+
+  return canonicalNames;
+}
+
+function preserveCanonicalNamesWithContext(value, canonicalNames = new Set()) {
+  let text = preserveCanonicalNames(value);
+
+  canonicalNames.forEach((canonicalName) => {
+    const patterns = CANONICAL_NAME_PATTERNS_CONTEXTUAL[canonicalName] || [];
+    patterns.forEach((pattern) => {
+      text = text.replace(pattern, canonicalName);
+    });
+  });
+
+  canonicalNames.forEach((canonicalName) => {
+    const exactPattern = new RegExp(escapeRegExp(canonicalName), "gi");
+    text = text.replace(exactPattern, canonicalName);
+  });
+
+  return text;
+}
+
+function joinNatural(values, maxItems = 3) {
+  const items = values.filter(Boolean).slice(0, maxItems);
+
+  if (!items.length) {
+    return "";
+  }
+
+  if (items.length === 1) {
+    return items[0];
+  }
+
+  if (items.length === 2) {
+    return `${items[0]} ve ${items[1]}`;
+  }
+
+  return `${items.slice(0, -1).join(", ")} ve ${items[items.length - 1]}`;
+}
+
+function toSentence(value) {
+  const normalized = cleanText(value);
+  if (!normalized) {
+    return "";
+  }
+
+  const sentence = `${normalized.charAt(0).toLocaleUpperCase("tr-TR")}${normalized.slice(1)}`;
+  return /[.!?]$/.test(sentence) ? sentence : `${sentence}.`;
 }
 
 function formatConfidence(score, label) {
@@ -15,7 +164,15 @@ function formatConfidence(score, label) {
   }
 
   const formattedScore = Number(score).toFixed(2);
-  return label ? `${formattedScore} / ${label}` : formattedScore;
+  const normalizedLabel = cleanText(label).toLocaleLowerCase("tr-TR");
+  const labelMap = {
+    high: "yüksek",
+    medium: "orta",
+    low: "düşük",
+  };
+  const translatedLabel = labelMap[normalizedLabel] || normalizedLabel;
+
+  return translatedLabel ? `${formattedScore} / ${translatedLabel}` : formattedScore;
 }
 
 function formatMappingMethod(value) {
@@ -37,7 +194,7 @@ function mapSimpleItems(values) {
   }
 
   return values
-    .map((item) => String(item || "").trim())
+    .map((item) => cleanText(String(item || "")))
     .filter(Boolean)
     .map((item) => ({ title: item }));
 }
@@ -61,7 +218,7 @@ function mapPredictions(values) {
       item.probability !== undefined && item.probability !== null
         ? `Olasılık ${(Number(item.probability) * 100).toFixed(1)}%`
         : null,
-    description: item.rationale ? String(item.rationale).trim() : null,
+    description: item.rationale ? cleanText(String(item.rationale)) : null,
   }));
 }
 
@@ -70,102 +227,9 @@ function mapDefenses(values) {
     return [];
   }
 
-  const titleLabels = {
-    "Validate graph-linked controls": "İlgili güvenlik kontrollerini doğrulayın",
-    "Prepare next-stage monitoring": "Sonraki aşama izlemeyi güçlendirin",
-    "Treat output as analyst-assisted context": "Çıktıyı analist destekli değerlendirme olarak ele alın",
-    "Complete defense mapping coverage": "Savunma kapsamını gözden geçirin",
-    "Token Binding": "Oturum token doğrulama kontrolleri",
-    "Authentication Cache Invalidation": "Kimlik doğrulama önbelleğinin temizlenmesi",
-    "Domain Account Monitoring": "Domain hesap aktivitelerinin olağandışı erişim açısından yakından izlenmesi",
-    "Operational Process Monitoring": "İşlem zinciri davranışlarının ve olağandışı süreç akışlarının izlenmesi",
-    "Credential Compromise Scope Analysis": "Ele geçirilmiş kimlik bilgilerinin etki kapsamının hızla belirlenmesi",
-    "DNS Traffic Analysis": "DNS sorgu akışlarının derin analizi ve şüpheli çözümleme zincirlerinin izlenmesi",
-    "System Daemon Monitoring": "Arka planda çalışan kalıcılık süreçleri ve yetkisiz servis başlatmalarının izlenmesi",
-    "Token-based Authentication": "Token tabanlı kimlik doğrulama kontrollerinin sıkılaştırılması",
-  };
-
-  const humanizeDefenseTitle = (value) => {
-    const normalized = normalizeText(value, "Savunma önerisi");
-    if (titleLabels[normalized]) {
-      return titleLabels[normalized];
-    }
-
-    const lowered = normalized.toLocaleLowerCase("tr-TR");
-
-    if (lowered.includes("token binding")) {
-      return "Oturum token doğrulama kontrolleri";
-    }
-
-    if (lowered.includes("cache invalidation")) {
-      return "Kimlik doğrulama önbelleğinin temizlenmesi";
-    }
-
-    if (lowered.includes("domain account monitoring")) {
-      return "Domain hesap aktivitelerinin olağandışı erişim açısından yakından izlenmesi";
-    }
-
-    if (lowered.includes("process monitoring")) {
-      return "İşlem zinciri davranışlarının ve olağandışı süreç akışlarının izlenmesi";
-    }
-
-    if (lowered.includes("credential compromise")) {
-      return "Ele geçirilmiş kimlik bilgilerinin etki kapsamının hızla belirlenmesi";
-    }
-
-    if (lowered.includes("dns traffic analysis")) {
-      return "DNS sorgu akışlarının derin analizi ve şüpheli çözümleme zincirlerinin izlenmesi";
-    }
-
-    if (lowered.includes("system daemon monitoring")) {
-      return "Arka planda çalışan kalıcılık süreçleri ve yetkisiz servis başlatmalarının izlenmesi";
-    }
-
-    if (lowered.includes("token-based authentication")) {
-      return "Token tabanlı kimlik doğrulama kontrollerinin sıkılaştırılması";
-    }
-
-    return normalized;
-  };
-
-  const normalizeDefenseDescription = (item) => {
-    const title = normalizeText(item.title, "Savunma önerisi");
-    const description = normalizeText(item.description, "");
-
-    if (description.startsWith("Graph-derived defense candidate linked to artifact")) {
-      return "Bu savunma önerisi, senaryoda öne çıkan erişim ve etki alanı için öncelikli değerlendirme adımı olarak ele alınmalıdır.";
-    }
-
-    if (description.includes("Review your real control catalog")) {
-      return "İlgili hesap, host veya servis için tanımlı güvenlik kontrollerini doğrulayın ve mevcut risk tablosuna göre önceliklendirin.";
-    }
-
-    if (description.includes("Extend detection and review coverage")) {
-      return "İzleme kapsamını genişleterek olayın ilerleme ihtimali bulunan alanlarda ek görünürlük sağlayın.";
-    }
-
-    if (description.includes("use the artifact and graph context as triage support")) {
-      return "Bu öneriyi nihai karar yerine analist değerlendirmesini destekleyen ön inceleme girdisi olarak kullanın.";
-    }
-
-    if (description.includes("Add or validate artifact-to-defense relationships")) {
-      return "Bu senaryoda daha somut öneriler üretebilmek için ilgili savunma kapsamını ve kontrol eşleşmelerini gözden geçirin.";
-    }
-
-    if (description) {
-      return description;
-    }
-
-    if (titleLabels[title]) {
-      return "Bu adım, mevcut senaryoda öne çıkan riskleri kontrol altına almak için öncelikli savunma değerlendirmesi sağlar.";
-    }
-
-    return "";
-  };
-
   return values.map((item) => ({
-    title: humanizeDefenseTitle(item.title),
-    description: normalizeDefenseDescription(item),
+    title: normalizeText(item.title, "Defense suggestion"),
+    description: "",
   }));
 }
 
@@ -188,6 +252,100 @@ function formatAnalysisRouteLabel(value) {
   };
 
   return labels[value] || labels.artifact_first;
+}
+
+function titlesOf(values) {
+  return (values || [])
+    .map((item) => cleanText(typeof item === "string" ? item : item?.title || ""))
+    .filter(Boolean);
+}
+
+function resolvePrimaryAnalysisAttackName(mappedResult, narrative) {
+  const interpretationLead = cleanText(narrative?.narrativePlan?.interpretation_lead || "");
+  const canonicalLead = interpretationLead.split(",")[0]?.trim();
+
+  return canonicalLead || mappedResult.matchedAttack || mappedResult.fallbackAttackFamily || "ilgili saldırı ailesi";
+}
+
+function buildStructuredSections(mappedResult, narrative) {
+  const topDirectTactics = (
+    narrative?.narrativePlan?.topDirectTactics || titlesOf(mappedResult.directTactics)
+  ).slice(0, 3);
+  const topNextTactics = (
+    narrative?.narrativePlan?.topNextTactics || titlesOf(mappedResult.nextTactics)
+  ).slice(0, 3);
+  const impactArtifacts = titlesOf(mappedResult.mayImpactArtifacts).slice(0, 3);
+  const topDefenses = titlesOf(mappedResult.defenses).slice(0, 2);
+  const topPredictions = titlesOf(mappedResult.predictions).slice(0, 3);
+  const resolvedPrimaryAttackName = resolvePrimaryAnalysisAttackName(mappedResult, narrative);
+  const usesPrimaryAttackIdentity = resolvedPrimaryAttackName !== "ilgili saldırı ailesi";
+
+  const attackFamily =
+    mappedResult.matchedAttack || mappedResult.fallbackAttackFamily || "ilgili saldırı ailesi";
+  const confidenceLabel = mappedResult.confidence.includes("yüksek")
+    ? "yüksek"
+    : mappedResult.confidence.includes("orta")
+      ? "orta"
+      : mappedResult.confidence.includes("düşük")
+        ? "düşük"
+        : "";
+
+  const sections = [
+    {
+      title: "Analiz yorumu",
+      description: toSentence(
+        `${mappedResult.matchedAttackExact || usesPrimaryAttackIdentity ? "Bu senaryo en güçlü biçimde" : "Bu senaryo en yakın saldırı ailesi olan"} ${
+          resolvedPrimaryAttackName
+        } ${mappedResult.matchedAttackExact || usesPrimaryAttackIdentity ? "ile eşleşmektedir" : "üzerinden yorumlanmıştır"}. ${
+          confidenceLabel ? `Güven düzeyi ${confidenceLabel} olarak değerlendirilmiştir` : ""
+        }. ${
+          topDefenses.length
+            ? `Savunma tarafında ilk öncelik, ${joinNatural(topDefenses, 2)} kapsamında öne çıkan erişim ve davranış sinyallerinin değerlendirilmesidir`
+            : ""
+        }`
+      ),
+    },
+    {
+      title: "Olası akış",
+      description: toSentence(
+        `${
+          topDirectTactics.length
+            ? `Doğrudan taktik sinyalleri en çok ${joinNatural(topDirectTactics, 3)} etrafında yoğunlaşmaktadır`
+            : "Doğrudan taktik sinyalleri sınırlı görünmektedir"
+        }. ${
+          topNextTactics.length
+            ? `Sonraki aşamada saldırının ${joinNatural(topNextTactics, 3)} yönünde genişleme riski değerlendirilmektedir`
+            : "Sonraki aşama için ek taktik genişlemesi analist doğrulamasıyla izlenmelidir"
+        }`
+      ),
+    },
+    {
+      title: "Etki yayılımı",
+      description: toSentence(
+        impactArtifacts.length
+          ? `Etki yayılımı açısından ${joinNatural(impactArtifacts, 3)} gibi ilişkili artifact'lerin de etkilenmesi mümkündür`
+          : "Etki yayılımı açısından ilişkili artifact etkisi için mevcut graph sinyallerinin izlenmesi önerilir"
+      ),
+    },
+    {
+      title: "Savunma odağı",
+      description: toSentence(
+        topDefenses.length
+          ? `Savunma odağında ${joinNatural(topDefenses, 2)} öncelikli olarak ele alınmalıdır`
+          : "Savunma odağında ilgili host, hesap ve süreç bağlamının doğrulanması öncelikli tutulmalıdır"
+      ),
+    },
+    {
+      title: "Tahmin özeti",
+      description: toSentence(
+        topPredictions.length
+          ? `ML sıralaması, ${joinNatural(topPredictions, 3)} saldırılarını öne çıkan adaylar arasında göstermektedir`
+          : "ML sıralamasında öne çıkan ek saldırı adayı bulunmamaktadır"
+      ),
+    },
+  ];
+
+  return sections.filter((section) => section.description);
 }
 
 export function mapScenarioAnalysisResult(result, scenarioContext = {}) {
@@ -217,23 +375,17 @@ export function mapScenarioAnalysisResult(result, scenarioContext = {}) {
     extractedAttacks: mapSimpleItems(result.extracted_attacks),
     keywords: limitItems(mapSimpleItems(result.keywords)),
     intent: formatIntentLabel(normalizeText(result.intent, "general")),
-    explanationTitle:
-      result.explanation_title && result.explanation_title.trim()
-        ? result.explanation_title
-        : "Senaryo yorumu",
+    explanationTitle: "Analiz yorumu",
     explanationText:
       result.explanation_text && result.explanation_text.trim()
-        ? result.explanation_text
+        ? cleanText(result.explanation_text)
         : null,
-    explanationSections: result.explanation_sections?.length
-      ? result.explanation_sections
-          .map((section) => ({
-            title: normalizeText(section.label, "Özet"),
-            description: normalizeText(section.text, ""),
-          }))
-          .filter((section) => section.description)
-      : [],
   };
+
+  const canonicalNames = collectCanonicalNames(mappedResult, scenarioContext);
+  mappedResult.explanationText = mappedResult.explanationText
+    ? preserveCanonicalNamesWithContext(mappedResult.explanationText, canonicalNames)
+    : null;
 
   const narrative = buildScenarioNarrative({
     scenarioId: scenarioContext.id || "",
@@ -253,11 +405,16 @@ export function mapScenarioAnalysisResult(result, scenarioContext = {}) {
     keywords: mappedResult.keywords,
     predictions: mappedResult.predictions,
     explanationText: mappedResult.explanationText,
-    explanationSections: mappedResult.explanationSections,
+    explanationSections: [],
     confidence: mappedResult.confidence,
     mappingMethod: mappedResult.mappingMethod,
     lowConfidenceReason: mappedResult.lowConfidenceReason,
   });
+
+  const structuredSections = buildStructuredSections(mappedResult, narrative).map((section) => ({
+    ...section,
+    description: preserveCanonicalNamesWithContext(section.description, canonicalNames),
+  }));
 
   return {
     ...mappedResult,
@@ -267,15 +424,29 @@ export function mapScenarioAnalysisResult(result, scenarioContext = {}) {
     scenarioProfile: narrative.scenarioProfile,
     scenarioProfileResolution: narrative.profileResolution,
     narrativePlan: narrative.narrativePlan,
-    shortComment: narrative.interpretation,
-    summaryIntro: narrative.interpretation,
-    summaryComment: [narrative.immediateRisk, narrative.likelyNextStep].filter(Boolean).join(" "),
-    summaryImmediateActions: narrative.actions,
-    detailIntroSummary: narrative.detailSummary || narrative.interpretation,
-    detailSummaryParagraph: narrative.summaryParagraph || narrative.detailSummary || narrative.interpretation,
+    shortComment: preserveCanonicalNamesWithContext(narrative.interpretation, canonicalNames),
+    summaryIntro: preserveCanonicalNamesWithContext(narrative.interpretation, canonicalNames),
+    summaryComment: [narrative.immediateRisk, narrative.likelyNextStep]
+      .map((item) => preserveCanonicalNamesWithContext(item, canonicalNames))
+      .filter(Boolean)
+      .join(" "),
+    summaryImmediateActions: (narrative.actions || [])
+      .map((item) => preserveCanonicalNamesWithContext(item, canonicalNames))
+      .filter(Boolean),
+    detailIntroSummary: preserveCanonicalNamesWithContext(
+      narrative.detailSummary || narrative.interpretation,
+      canonicalNames
+    ),
+    detailSummaryParagraph: preserveCanonicalNamesWithContext(
+      narrative.summaryParagraph || narrative.detailSummary || narrative.interpretation,
+      canonicalNames
+    ),
+    explanationSections: structuredSections,
     summaryNarrative: narrative,
-    fallbackSummaryComment: narrative.immediateRisk,
-    fallbackSummaryIntro: narrative.interpretation,
-    fallbackImmediateActions: narrative.actions,
+    fallbackSummaryComment: preserveCanonicalNamesWithContext(narrative.immediateRisk, canonicalNames),
+    fallbackSummaryIntro: preserveCanonicalNamesWithContext(narrative.interpretation, canonicalNames),
+    fallbackImmediateActions: (narrative.actions || [])
+      .map((item) => preserveCanonicalNamesWithContext(item, canonicalNames))
+      .filter(Boolean),
   };
 }
