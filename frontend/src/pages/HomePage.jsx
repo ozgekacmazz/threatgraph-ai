@@ -72,25 +72,34 @@ const features = [
 
 const scenarios = [
   {
-    title: "Session Hijacking Risk Analysis",
-    subtitle: "JWT tabanlı oturum davranışı üzerinden saldırı sinyali çözümleme",
-    input: "Bearer token izi, API erişim kalıntıları ve kimlik doğrulama akışı",
-    matchedArtifact: "jwt token",
-    whyItMatters: "Oturum devralma, token misuse ve yetki istismarı gibi risklerin aynı karar ekranında görünmesini sağlar."
+    title: "Phishing Sonrası Kimlik Bilgisi veya MFA Token Ele Geçirilirse Ne Olabilir?",
+    input: "Phishing sonrası kimlik bilgisi veya MFA token ele geçirilirse ne olabilir?",
+    previewComment:
+      "Ele geçirilen oturum bilgileri ve doğrulama materyali üzerinden hesap kötüye kullanımı, yetkisiz erişim ve hızlı yayılım riski ürün düzeyinde incelenir."
   },
   {
-    title: "Privilege Context Token Correlation",
-    subtitle: "Token sinyaline bağlam eklenince eşleşme kalitesinin nasıl yükseldiği",
-    input: "Token ifadesi, privilege escalation ve session misuse açıklamalarıyla birlikte",
-    matchedArtifact: "jwt token",
-    whyItMatters: "Bağlamın mapping doğruluğunu ve ML saldırı sıralamasını nasıl güçlendirdiğini gösterir."
+    title: "Pass-the-Hash Sonrası Hangi Sistemlere Yayılım Olabilir?",
+    input: "Pass-the-Hash sonrası hangi sistemlere yayılım olabilir?",
+    previewComment:
+      "Kimlik doğrulama materyalinin yeniden kullanımı sonrasında uzak erişim yüzeyleri, etkilenecek host'lar ve yanal hareket ihtimali kısa ve net biçimde özetlenir."
   },
   {
-    title: "Network Reconnaissance via DNS",
-    subtitle: "DNS cache davranışı üzerinden ağ keşfi ve yönlendirme ilişkileri",
-    input: "DNS cache artifact'i, çözümleme akışı ve yönlendirme ipuçları",
-    matchedArtifact: "dns cache",
-    whyItMatters: "Keşif, yönlendirme ve network tactic zincirlerinin graph reasoning ile nasıl açıldığını görünür hale getirir."
+    title: "Kerberos Ticket Ele Geçirilirse Sonraki Saldırılar Neler Olabilir?",
+    input: "Kerberos ticket ele geçirilirse sonraki saldırılar neler olabilir?",
+    previewComment:
+      "Ticket tekrar kullanımı, servis erişimi, ayrıcalık kötüye kullanımı ve takip eden saldırı yolları karar desteği odağında görünür hale gelir."
+  },
+  {
+    title: "DNS Tunneling Tespit Edilirse Hangi Artifact'ler Risk Altındadır?",
+    input: "DNS tunneling tespit edilirse hangi artifact'ler risk altındadır?",
+    previewComment:
+      "Şüpheli DNS iletişimi görüldüğünde risk altındaki host, süreç, oturum ve ağ artifact'leri ürün senaryosu olarak hızlıca çerçevelenir."
+  },
+  {
+    title: "Domain Hesabı Compromise Olduysa Sonraki Riskler Neler Olabilir?",
+    input: "Domain hesabı compromise olduysa sonraki riskler neler olabilir?",
+    previewComment:
+      "Compromise olmuş bir domain hesabının erişebileceği sistemler, servisler ve olası zincir riskler kısa, anlaşılır ve ürün odaklı bir özetle sunulur."
   }
 ];
 

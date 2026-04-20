@@ -393,6 +393,17 @@ ATTACK_FALLBACK_FAMILIES: dict[str, str] = {
     "phishing": "phishing-related credential compromise",
 }
 
+DEFINITION_CANONICAL_ALIASES: dict[str, str] = {
+    "kerberos ticket": "access token",
+}
+
+DEFINITION_QUERY_PATTERNS = (
+    re.compile(r"^(?P<term>.+?)\s+nedir$"),
+    re.compile(r"^(?P<term>.+?)\s+ne\s+demek$"),
+    re.compile(r"^what\s+is\s+(?P<term>.+)$"),
+    re.compile(r"^what\s+does\s+(?P<term>.+?)\s+mean$"),
+)
+
 
 class QueryInterpreterService:
     """Rule-based multilingual interpretation layer for Turkish and English inputs."""
@@ -473,9 +484,46 @@ class QueryInterpreterService:
         return sorted(scores, key=lambda keyword: (-scores[keyword], keyword))
 
     @staticmethod
+    def _extract_definition_term(text: str) -> str | None:
+        normalized_text = text.strip().rstrip("?.!").strip()
+        if not normalized_text:
+            return None
+
+        for pattern in DEFINITION_QUERY_PATTERNS:
+            match = pattern.match(normalized_text)
+            if match:
+                term = str(match.group("term") or "").strip()
+                if term:
+                    return term
+        return None
+
+    @staticmethod
+    def _resolve_definition_canonical(
+        definition_term: str | None,
+        ranked_artifacts: list[str],
+        ranked_attacks: list[str],
+    ) -> str | None:
+        normalized_term = str(definition_term or "").strip()
+        if not normalized_term:
+            return None
+        if normalized_term in SCENARIO_ARTIFACT_CANONICALS:
+            return normalized_term
+        if normalized_term in SCENARIO_ATTACK_CANONICALS:
+            return normalized_term
+        if normalized_term in DEFINITION_CANONICAL_ALIASES:
+            return DEFINITION_CANONICAL_ALIASES[normalized_term]
+        if ranked_artifacts:
+            return ranked_artifacts[0]
+        if ranked_attacks:
+            return ranked_attacks[0]
+        return None
+
+    @staticmethod
     def _detect_scenario_intent(text: str) -> str:
         if not text:
             return "prediction"
+        if QueryInterpreterService._extract_definition_term(text):
+            return "definition"
 
         defense_markers = (
             "nasil korun",
@@ -635,6 +683,12 @@ class QueryInterpreterService:
             set(ranked_artifacts) | set(ranked_attacks) | set(self._extract_canonical_keywords("", normalized_text))
         )
         intent = self._detect_scenario_intent(normalized_text)
+        definition_term = self._extract_definition_term(normalized_text)
+        definition_canonical = self._resolve_definition_canonical(
+            definition_term=definition_term,
+            ranked_artifacts=ranked_artifacts,
+            ranked_attacks=ranked_attacks,
+        )
         top_family = self._top_family_from_scores(artifact_scores, artifact_families)
         analysis_route = "attack_first" if csv_matched_attack else self._select_analysis_route(artifact_scores, attack_scores)
 
@@ -643,6 +697,8 @@ class QueryInterpreterService:
             "attacks": ranked_attacks,
             "keywords": keywords,
             "intent": intent,
+            "definition_term": definition_term,
+            "definition_canonical": definition_canonical,
             "analysis_route": analysis_route,
             "csv_matched_attack": csv_matched_attack,
             "csv_alias_match_used": csv_alias_match_used,

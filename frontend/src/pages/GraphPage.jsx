@@ -4,29 +4,6 @@ import SectionHeader from "../components/SectionHeader";
 import SurfaceCard from "../components/SurfaceCard";
 import { fetchGraphContext } from "../services/api";
 
-const graphSections = [
-  {
-    title: "Artifact düğümleri",
-    text: "Analiz edilen giriş artifact'i ve varsa eşleşen canonical artifact düğümü aynı graph odak alanında gösterilir."
-  },
-  {
-    title: "Attack ilişkileri",
-    text: "Neo4j reasoning sonucu ortaya çıkan doğrudan saldırılar ve varsa yayılım kaynaklı saldırılar graph üzerinde okunabilir biçimde açılır."
-  },
-  {
-    title: "Tactic akışı",
-    text: "Doğrudan tactic ilişkileri `HAS_TACTIC`, sonraki genişleme hattı ise `NEXT_TACTIC` kenarlarıyla ayrıştırılır."
-  },
-  {
-    title: "Savunma ilişkileri",
-    text: "Defense düğümleri mevcut olduğunda `DEFENDED_BY` ilişkileriyle aynı görünümde karar desteğine eklenir."
-  },
-  {
-    title: "Etki yayılımı",
-    text: "Bağlı varlıklara doğru genişleyen risk hattı, zincirleme etkileri ve ek saldırı yüzeyini aynı keşif akışında görünür kılar."
-  }
-];
-
 const exampleQueries = ["access token", "powershell script", "dns cache"];
 
 function GraphPage() {
@@ -95,14 +72,7 @@ function GraphPage() {
         <SurfaceCard
           className="graph-query-panel"
           title="Graph odağı"
-          subtitle="Son analiz edilen artifact'i inceleyin veya yeni bir odak sorgusu başlatın."
         >
-          <p>
-            Graph endpoint'i; artifact, eşleşen artifact, attack ilişkileri, tactic akışı,
-            savunma bağlantıları, etki yayılımı ve yayılım kaynaklı saldırı sinyallerini
-            normalize edilmiş ilişki yapısıyla frontend'e taşır.
-          </p>
-
           <div className="query-helper-strip">
             <span>Örnek sorgular</span>
             <div className="query-helper-chips">
@@ -200,16 +170,6 @@ function GraphPage() {
             emptyTitle="Henüz graph bağlamı oluşturulmadı"
             emptyDescription="Bir analiz çalıştırın veya bilinen bir artifact odağı yükleyerek canlı graph görünümünü başlatın."
           />
-        </div>
-      </section>
-
-      <section className="container content-section-inner section-panel section-panel-dark">
-        <div className="card-grid card-grid-2">
-          {graphSections.map((item) => (
-            <SurfaceCard key={item.title} title={item.title}>
-              <p>{item.text}</p>
-            </SurfaceCard>
-          ))}
         </div>
       </section>
     </div>

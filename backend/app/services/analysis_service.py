@@ -29,6 +29,48 @@ from app.utils.helpers import confidence_to_label
 
 logger = logging.getLogger(__name__)
 
+DEFINITION_DISPLAY_NAMES: dict[str, str] = {
+    "access token": "Access Token",
+    "credential": "Credential",
+    "session": "Session",
+    "dns lookup": "DNS Lookup",
+    "lateral movement": "Lateral Movement",
+    "privilege escalation": "Privilege Escalation",
+}
+
+DEFINITION_EXPLANATIONS: dict[str, dict[str, str]] = {
+    "access token": {
+        "definition": "bir kullanicinin veya uygulamanin dogrulama sonrasinda belirli kaynaklara erisebilmesi icin kullanilan gecici yetkilendirme bilgisidir.",
+        "importance": "Ele gecirilirse saldirgan ilgili kullanici veya servis adina islem yapabilir.",
+        "example": "Ornegin bir API'ye yapilan istekte token kullanilarak erisim yetkisi tasinabilir.",
+    },
+    "credential": {
+        "definition": "kimlik dogrulama icin kullanilan bilgi veya sirlardan olusan genel bir terimdir.",
+        "importance": "Parola, API key, token veya sertifika gibi bilgiler ele gecirilirse yetkisiz erisim dogabilir.",
+        "example": "Ornegin kullanici adi ve parola bir credential ciftidir.",
+    },
+    "session": {
+        "definition": "bir kullanici dogrulandiktan sonra sistem ile olan etkin etkilesimini temsil eden gecici durum bilgisidir.",
+        "importance": "Oturum bilgisi calinirsa saldirgan tekrar parola girmeden kullanici gibi davranabilir.",
+        "example": "Web uygulamalarinda session bilgisi cogu zaman cookie veya sunucu oturum kaydi ile tutulur.",
+    },
+    "dns lookup": {
+        "definition": "bir alan adinin IP adresine veya ilgili DNS kayitlarina cozulmesi islemidir.",
+        "importance": "Guvenlikte onemlidir cunku supheli alan adlari, komuta kontrol iletisimleri veya yanlis yonlendirmeler DNS sorgularinda gorulebilir.",
+        "example": "Bir istemcinin bilinmeyen bir domaine tekrar tekrar sorgu gondermesi inceleme gerektirebilir.",
+    },
+    "lateral movement": {
+        "definition": "bir saldirganin ilk erisimi elde ettikten sonra ag icinde baska sistemlere veya hesaplara ilerleme davranisidir.",
+        "importance": "Etkisi buyuktur cunku tek bir makinedeki ihlal daha genis ortamlara yayilabilir.",
+        "example": "Ele gecirilmis bir hesabin baska bir sunucuya uzaktan baglanmak icin kullanilmasi buna ornek olabilir.",
+    },
+    "privilege escalation": {
+        "definition": "bir kullanici veya surecin mevcut yetkilerini daha yuksek ayricaliklara cikarmasidir.",
+        "importance": "Basarili olursa saldirgan daha fazla kaynaga erisebilir ve kalicilik saglamasi kolaylasabilir.",
+        "example": "Standart bir kullanicinin yonetici haklari elde etmesi buna ornek verilebilir.",
+    },
+}
+
 
 class AnalysisService:
     """Coordinates mapping, KG reasoning, ML ranking, and defense suggestions."""
@@ -266,6 +308,18 @@ class AnalysisService:
         phrase_priority_used = bool(scenario.get("phrase_priority_used"))
         top_candidate_family = str(scenario.get("top_candidate_family") or "").strip()
         identity_access_bias_used = bool(scenario.get("identity_access_bias_used"))
+        definition_term = str(scenario.get("definition_term") or "").strip()
+        definition_canonical = str(scenario.get("definition_canonical") or "").strip()
+        if intent == "definition":
+            return self._build_definition_scenario_response(
+                text=text,
+                normalized_text=self.query_interpreter_service.normalize_text(text),
+                extracted_artifacts=extracted_artifacts,
+                extracted_attacks=extracted_attacks,
+                extracted_keywords=extracted_keywords,
+                definition_term=definition_term,
+                definition_canonical=definition_canonical,
+            )
         selected_artifact = self._select_scenario_artifact_candidate(
             text=text,
             extracted_artifacts=extracted_artifacts,
@@ -947,6 +1001,128 @@ class AnalysisService:
                 "Attack-centric route used a nearby attack family instead of an exact graph technique."
             )
         return base_response
+
+    @staticmethod
+    def _format_definition_display_name(term: str) -> str:
+        normalized_term = str(term or "").strip().lower()
+        if not normalized_term:
+            return "Terim aciklamasi"
+        return DEFINITION_DISPLAY_NAMES.get(
+            normalized_term,
+            " ".join(part.capitalize() for part in normalized_term.split()),
+        )
+
+    def _build_definition_text(
+        self,
+        definition_term: str,
+        definition_canonical: str,
+    ) -> tuple[str, str]:
+        normalized_term = str(definition_term or "").strip().lower()
+        normalized_canonical = str(definition_canonical or "").strip().lower()
+        explanation_key = normalized_canonical or normalized_term
+        explanation = DEFINITION_EXPLANATIONS.get(explanation_key)
+        title = self._format_definition_display_name(normalized_canonical or normalized_term)
+
+        if explanation:
+            sentences = [
+                f"{title}, {explanation['definition']}",
+                f"Guvenlik acisindan onemlidir cunku {explanation['importance'].rstrip('.').lower()}.",
+            ]
+            example = str(explanation.get("example") or "").strip()
+            if example:
+                sentences.append(example)
+            if normalized_term and normalized_canonical and normalized_term != normalized_canonical:
+                sentences.insert(
+                    1,
+                    f"Bu sorgu sistemde en yakin canonical terim olarak {self._format_definition_display_name(normalized_canonical)} ile eslestirildi.",
+                )
+            return title, " ".join(sentences)
+
+        fallback_title = self._format_definition_display_name(normalized_term or normalized_canonical)
+        fallback_text = (
+            f"{fallback_title}, bu sistemde belirli bir attack veya artifact olarak guvenilir bicimde eslestirilemeyen bir guvenlik terimidir. "
+            "Bu nedenle senaryo veya risk anlatisi uydurulmadan, yalnizca kisa aciklama duzeyinde yanit verildi. "
+            "Daha dogru yorum icin terimin gectigi teknoloji ya da baglamla birlikte degerlendirilmesi gerekir."
+        )
+        return fallback_title, fallback_text
+
+    def _build_definition_scenario_response(
+        self,
+        text: str,
+        normalized_text: str,
+        extracted_artifacts: list[str],
+        extracted_attacks: list[str],
+        extracted_keywords: list[str],
+        definition_term: str,
+        definition_canonical: str,
+    ) -> AnalyzeResponse:
+        """Return a short explanatory response without entering the scenario-analysis pipeline."""
+        resolved_term = definition_canonical or definition_term or normalized_text
+        explanation_title, explanation_text = self._build_definition_text(
+            definition_term=definition_term,
+            definition_canonical=definition_canonical,
+        )
+        normalized_resolved_term = str(resolved_term).strip().lower()
+        matched_artifact = (
+            self._format_definition_display_name(normalized_resolved_term)
+            if normalized_resolved_term in set(extracted_artifacts)
+            or normalized_resolved_term in {"access token", "credential", "session", "dns lookup"}
+            else None
+        )
+        matched_attack = (
+            self._format_definition_display_name(normalized_resolved_term)
+            if normalized_resolved_term in set(extracted_attacks)
+            or normalized_resolved_term in {"lateral movement", "privilege escalation"}
+            else None
+        )
+        diagnostics = Diagnostics(
+            original_artifact="",
+            original_description=text,
+            normalized_artifact=normalized_resolved_term,
+            normalized_description=normalized_text,
+            multilingual_keywords=extracted_keywords,
+            thresholds={
+                "low_confidence_threshold": self.settings.low_confidence_threshold,
+                "strict_prediction_threshold": self.settings.strict_prediction_threshold,
+            },
+            processing_steps=["interpret_scenario", "definition_early_return"],
+            data_sources={
+                "analysis_mode": "scenario",
+                "scenario_analysis_route": "definition",
+                "definition_detected": "true",
+                "definition_canonical_term": normalized_resolved_term or "none",
+            },
+        )
+        return AnalyzeResponse(
+            input_artifact=text,
+            matched_artifact=matched_artifact,
+            matched_category=None,
+            mapping_method="definition_explanation",
+            confidence_score=1.0,
+            confidence_label=confidence_to_label(1.0),
+            direct_attacks=[],
+            may_impact_artifacts=[],
+            may_impact_attacks=[],
+            direct_tactics=[],
+            next_tactics=[],
+            predicted_attacks_top5=[],
+            defense_suggestions=[],
+            low_confidence_reason=None,
+            extracted_artifacts=extracted_artifacts,
+            extracted_attacks=extracted_attacks,
+            keywords=extracted_keywords,
+            intent="definition",
+            matched_attack=matched_attack,
+            matched_attack_exact=False,
+            fallback_attack_family=None,
+            fallback_attack_explanation=None,
+            analysis_route="definition",
+            attack_match_method=None,
+            explanation_title=explanation_title,
+            explanation_text=explanation_text,
+            explanation_sections=[],
+            diagnostics=diagnostics,
+        )
 
     def _attach_explanation(self, response: AnalyzeResponse, intent: str | None = None) -> None:
         """Add a deterministic Turkish explanation layer on top of the structured result."""
