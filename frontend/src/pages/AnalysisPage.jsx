@@ -6,6 +6,7 @@ import ResultMetricCard from "../components/ResultMetricCard";
 import SectionHeader from "../components/SectionHeader";
 import SurfaceCard from "../components/SurfaceCard";
 import { analyzeArtifact, fetchArtifacts, fetchGraphContext } from "../services/api";
+import { exportAnalysisPdf } from "../utils/analysisPdfExport";
 
 const emptyResult = {
   matched_artifact: "Henüz analiz edilmedi",
@@ -209,6 +210,8 @@ function AnalysisPage() {
   const [graphData, setGraphData] = useState(null);
   const [graphLoading, setGraphLoading] = useState(false);
   const [graphError, setGraphError] = useState("");
+  const [pdfError, setPdfError] = useState("");
+  const [pdfLoading, setPdfLoading] = useState(false);
   const [artifacts, setArtifacts] = useState([]);
   const [artifactsError, setArtifactsError] = useState("");
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -469,6 +472,7 @@ function AnalysisPage() {
     setGraphLoading(true);
     setError("");
     setGraphError("");
+    setPdfError("");
     setValidationError("");
     setModeNotice("");
 
@@ -500,6 +504,28 @@ function AnalysisPage() {
     } finally {
       setLoading(false);
       setGraphLoading(false);
+    }
+  };
+
+  const handlePdfExport = async () => {
+    if (!result || !displayedResult) {
+      return;
+    }
+
+    try {
+      setPdfLoading(true);
+      setPdfError("");
+      await exportAnalysisPdf({
+        artifactName,
+        mode,
+        result,
+        displayedResult,
+        graphData
+      });
+    } catch (exportError) {
+      setPdfError(exportError.message || "PDF oluşturulamadı. Lütfen tekrar deneyin.");
+    } finally {
+      setPdfLoading(false);
     }
   };
 
@@ -659,6 +685,24 @@ function AnalysisPage() {
             title="Analiz özeti"
             subtitle="Eşleşme, graph reasoning, etki yayılımı, ML sıralaması ve savunma önerileri burada okunabilir bir karar özeti olarak sunulur."
           >
+            <div className="form-actions">
+              <button
+                className="button button-secondary"
+                type="button"
+                onClick={handlePdfExport}
+                disabled={!result || !graphData || loading || graphLoading || pdfLoading}
+              >
+                {pdfLoading ? "PDF hazırlanıyor..." : "PDF olarak indir"}
+              </button>
+              <span className="inline-status">
+                {result && graphData
+                  ? "Mevcut analiz ve graph özeti tek PDF raporda dışa aktarılır."
+                  : "Önce bir analiz çalıştırın, ardından raporu PDF olarak indirebilirsiniz."}
+              </span>
+            </div>
+
+            {pdfError ? <p className="helper-note helper-note-warning">{pdfError}</p> : null}
+
             <div ref={resultsRef} className="results-anchor">
               {!hasSubmitted && !loading ? (
                 <div className="analysis-status-card analysis-status-card-ready">
