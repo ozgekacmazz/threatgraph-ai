@@ -15,9 +15,19 @@ function ScenarioCard({
   input,
   previewComment,
   to,
-  ctaLabel = "Analizi görüntüle",
+  ctaLabel = "Analizi g\u00F6r\u00FCnt\u00FCle",
+  buttonVariant,
 }) {
   const targetRoute = to || "/senaryolar";
+  const ctaClassName = ["button", "button-secondary", "scenario-card-cta"];
+
+  if (buttonVariant === "home") {
+    ctaClassName.push("scenario-card-cta-home");
+  }
+
+  if (buttonVariant === "scenarios") {
+    ctaClassName.push("scenario-card-cta-scenarios");
+  }
 
   return (
     <SurfaceCard className="scenario-card" title={title}>
@@ -25,7 +35,7 @@ function ScenarioCard({
       {previewComment ? (
         <p className="scenario-card-preview">{clampPreview(previewComment, 140)}</p>
       ) : null}
-      <Link className="button button-secondary scenario-card-cta" to={targetRoute}>
+      <Link className={ctaClassName.join(" ")} to={targetRoute}>
         {ctaLabel}
       </Link>
     </SurfaceCard>

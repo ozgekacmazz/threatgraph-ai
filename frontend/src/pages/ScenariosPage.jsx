@@ -29,6 +29,7 @@ function ScenariosPage() {
               previewComment={scenario.shortPreview}
               to={`/senaryolar/hazir/${scenario.id}`}
               ctaLabel="Senaryo analizi"
+              buttonVariant="scenarios"
             />
           ))}
         </div>

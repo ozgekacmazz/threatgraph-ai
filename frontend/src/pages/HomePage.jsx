@@ -271,7 +271,7 @@ function HomePage() {
           />
           <div className="card-grid card-grid-3">
             {scenarios.map((scenario) => (
-              <ScenarioCard key={scenario.title} {...scenario} />
+              <ScenarioCard key={scenario.title} {...scenario} buttonVariant="home" />
             ))}
           </div>
         </div>
