@@ -110,7 +110,7 @@ function HomePage() {
         <div className="container hero-grid">
           <div className="hero-copy-block">
             <p className="section-eyebrow">ThreatGraph AI</p>
-            <h1>Siber saldırıları bilgi grafiği üzerinden anlayın, tahmin edin ve yönetin</h1>
+            <h1>Siber saldırıları bilgi grafı üzerinden anlayın, tahmin edin ve yönetin</h1>
             <p className="hero-description">
               Knowledge graph ve makine öğrenmesi ile saldırı davranışını çözümleyen karar
               destek sistemi. ThreatGraph AI, yeni gelen artifact&apos;leri ve graf içinde zaten
