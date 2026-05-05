@@ -21,13 +21,21 @@ function normalizeText(value, fallback = "-") {
   return trimmed || fallback;
 }
 
-function formatConfidence(score, label) {
-  if (score === undefined || score === null || Number.isNaN(Number(score))) {
+function formatConfidenceLevel(score) {
+  const numericScore = Number(score);
+  if (score === undefined || score === null || Number.isNaN(numericScore)) {
     return "-";
   }
 
-  const formattedScore = Number(score).toFixed(2);
-  return label ? `${formattedScore} / ${label}` : formattedScore;
+  if (numericScore >= 0.85 || numericScore >= 1) {
+    return "Güçlü";
+  }
+
+  if (numericScore >= 0.5) {
+    return "Orta";
+  }
+
+  return "Düşük";
 }
 
 function formatMappingMethod(value) {
@@ -123,7 +131,7 @@ function ScenarioPage() {
       matchedCategory: normalizeText(result.matched_category, "Kategori bulunamadı"),
       mappingMethod: formatMappingMethod(result.mapping_method),
       analysisRoute: formatAnalysisRouteLabel(normalizeText(result.analysis_route, "artifact_first")),
-      confidence: formatConfidence(result.confidence_score, result.confidence_label),
+      confidence: formatConfidenceLevel(result.confidence_score),
       directAttacks: mapSimpleItems(result.direct_attacks),
       mayImpactArtifacts: mapSimpleItems(result.may_impact_artifacts),
       mayImpactAttacks: mapSimpleItems(result.may_impact_attacks),
@@ -315,7 +323,11 @@ function ScenarioPage() {
               <ResultMetricCard title="Eşleşen artifact" value={displayedResult.matchedArtifact} />
               <ResultMetricCard title="Kategori" value={displayedResult.matchedCategory} />
               <ResultMetricCard title="Eşleşme yöntemi" value={displayedResult.mappingMethod} />
-              <ResultMetricCard title="Güven düzeyi" value={displayedResult.confidence} />
+              <ResultMetricCard
+                title="Analiz kanıt seviyesi"
+                value={displayedResult.confidence}
+                helper="Bu seviye, eşleşme gücü ve sistem sinyallerine göre belirlenir."
+              />
 
               {displayedResult.extractedArtifacts.length ? (
                 <ResultMetricCard

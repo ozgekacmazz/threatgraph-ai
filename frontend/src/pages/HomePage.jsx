@@ -110,11 +110,10 @@ function HomePage() {
         <div className="container hero-grid">
           <div className="hero-copy-block">
             <p className="section-eyebrow">ThreatGraph AI</p>
-            <h1>Siber saldırıları bilgi grafı üzerinden anlayın, tahmin edin ve yönetin</h1>
+            <h1>Saldırıları sadece tespit etmeyin — yayılmadan durdurun</h1>
             <p className="hero-description">
-              Knowledge graph ve makine öğrenmesi ile saldırı davranışını çözümleyen karar
-              destek sistemi. ThreatGraph AI, yeni gelen artifact&apos;leri ve graf içinde zaten
-              bilinen sinyalleri tek bir ürün akışında analiz eder.
+              ThreatGraph AI, saldırıların nasıl ilerleyeceğini analiz eder, riskleri önceden
+              tahmin eder ve size doğrudan aksiyon önerir.
             </p>
             <div className="hero-actions">
               <Link className="button button-primary" to="/analiz">
@@ -123,16 +122,16 @@ function HomePage() {
             </div>
             <div className="hero-highlights">
               <div>
-                <strong>Çift analiz modu</strong>
-                <span>Yeni artifact ve mevcut artifact akışları aynı çalışma alanında.</span>
+                <strong>Saldırının nasıl yayılacağını</strong>
+                <span>gösterir</span>
               </div>
               <div>
-                <strong>Knowledge graph + ML</strong>
-                <span>İlişki çıkarımı ile saldırı önceliklendirmesi birlikte çalışır.</span>
+                <strong>En kritik riski</strong>
+                <span>önceliklendirir</span>
               </div>
               <div>
-                <strong>Dürüst karar desteği</strong>
-                <span>Düşük güven durumunda sistem sonucu zorlamaz, nedeniyle açıklar.</span>
+                <strong>Ne yapmanız gerektiğini</strong>
+                <span>doğrudan söyler</span>
               </div>
             </div>
           </div>

@@ -460,7 +460,7 @@ export async function exportAnalysisPdf({
     { label: "Girdi artifact", value: inputArtifact },
     { label: "Eşleşen artifact", value: matchedArtifact },
     { label: "Analiz modu", value: deriveModeLabel(mode) },
-    { label: "Güven düzeyi", value: formatConfidenceValue(displayedResult?.confidence_score), highlight: true },
+    { label: "Analiz kanıt seviyesi", value: formatConfidenceValue(displayedResult?.confidence_score), highlight: true },
   ];
 
   let currentY = drawHeaderBlock(doc, summaryRows, timestamp, contentWidth);

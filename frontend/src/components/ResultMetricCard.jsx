@@ -16,13 +16,14 @@ function renderStructuredItem(item) {
   );
 }
 
-function ResultMetricCard({ title, value, items, tone = "default", className = "" }) {
+function ResultMetricCard({ title, value, helper, items, tone = "default", className = "" }) {
   return (
     <article className={`result-metric-card result-metric-card-${tone} ${className}`.trim()}>
       <span className="metric-label">{title}</span>
       {value !== undefined && value !== null && value !== "" ? (
         <p className="metric-value">{value}</p>
       ) : null}
+      {helper ? <p className="metric-helper">{helper}</p> : null}
       {items?.length ? (
         <ul className="metric-list">
           {items.map((item, index) => (

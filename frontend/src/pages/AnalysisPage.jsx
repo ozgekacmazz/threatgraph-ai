@@ -31,7 +31,7 @@ const loadingStages = [
 
 const skeletonCards = [
   { title: "Eşleşen artifact", emphasis: "primary" },
-  { title: "Güven düzeyi", emphasis: "highlight" },
+  { title: "Analiz kanıt seviyesi", emphasis: "highlight" },
   { title: "Top-5 saldırı tahmini", emphasis: "highlight", lines: 4 },
   { title: "Teknik detaylar", lines: 3 }
 ];
@@ -70,13 +70,21 @@ function normalizeKey(value) {
     .replace(/[\s/_-]+/g, " ");
 }
 
-function formatConfidence(score, label) {
-  if (score === undefined || score === null || Number.isNaN(Number(score))) {
+function formatConfidenceLevel(score) {
+  const numericScore = Number(score);
+  if (score === undefined || score === null || Number.isNaN(numericScore)) {
     return "-";
   }
 
-  const formattedScore = Number(score).toFixed(2);
-  return label ? `${formattedScore} / ${label}` : formattedScore;
+  if (numericScore >= 0.85 || numericScore >= 1) {
+    return "Güçlü";
+  }
+
+  if (numericScore >= 0.5) {
+    return "Orta";
+  }
+
+  return "Düşük";
 }
 
 function normalizeText(value, fallback) {
@@ -336,7 +344,7 @@ function AnalysisPage() {
       matched_artifact: normalizeText(result.matched_artifact, "Eşleşme bulunamadı"),
       matched_category: normalizeText(result.matched_category, "Kategori bilgisi üretilemedi"),
       mapping_method: formatMappingMethod(result.mapping_method),
-      confidence_score: formatConfidence(result.confidence_score, result.confidence_label),
+      confidence_score: formatConfidenceLevel(result.confidence_score),
       direct_attacks: result.direct_attacks?.length
         ? result.direct_attacks.map((attack) => ({ title: normalizeText(attack, "Bilinmeyen saldırı") }))
         : [{ title: "Doğrudan saldırı sinyali bulunamadı" }],
@@ -718,7 +726,7 @@ function AnalysisPage() {
                     <span>Etki yayılımı</span>
                     <span>Top-5 tahmin</span>
                     <span>Savunma odağı</span>
-                    <span>Güven düzeyi</span>
+                    <span>Analiz kanıt seviyesi</span>
                   </div>
                 </div>
               ) : null}
@@ -790,8 +798,9 @@ function AnalysisPage() {
               <ResultMetricCard title="Kategori" value={displayedResult.matched_category} />
               <ResultMetricCard title="Eşleme yöntemi" value={displayedResult.mapping_method} />
               <ResultMetricCard
-                title="Güven düzeyi"
+                title="Analiz kanıt seviyesi"
                 value={displayedResult.confidence_score}
+                helper="Bu seviye, eşleşme gücü ve sistem sinyallerine göre belirlenir."
                 tone="accent"
                 className={`result-card-highlight ${getConfidenceClass(result?.confidence_score)}`.trim()}
               />
