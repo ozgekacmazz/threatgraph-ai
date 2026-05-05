@@ -110,7 +110,7 @@ function HomePage() {
         <div className="container hero-grid">
           <div className="hero-copy-block">
             <p className="section-eyebrow">ThreatGraph AI</p>
-            <h1>Saldırıları sadece tespit etmeyin — yayılmadan durdurun</h1>
+            <h1>Saldırıları sadece tespit etmeyin, yayılmadan durdurun</h1>
             <p className="hero-description">
               ThreatGraph AI, saldırıların nasıl ilerleyeceğini analiz eder, riskleri önceden
               tahmin eder ve size doğrudan aksiyon önerir.
@@ -122,16 +122,16 @@ function HomePage() {
             </div>
             <div className="hero-highlights">
               <div>
-                <strong>Saldırının nasıl yayılacağını</strong>
-                <span>gösterir</span>
+                <strong>Saldırının nasıl yayılacağını gösterir</strong>
+                <span></span>
               </div>
               <div>
-                <strong>En kritik riski</strong>
-                <span>önceliklendirir</span>
+                <strong>En kritik riskleri önceliklendirir</strong>
+                <span></span>
               </div>
               <div>
-                <strong>Ne yapmanız gerektiğini</strong>
-                <span>doğrudan söyler</span>
+                <strong>Ne yapmanız gerektiğini doğrudan söyler</strong>
+                <span></span>
               </div>
             </div>
           </div>
